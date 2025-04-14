@@ -156,6 +156,7 @@ node_modules
 /server/.env.test
 /server/.env.local
 /server/tsconfig.tsbuildinfo
+/server/logs
 /.pnp
 .pnp.js
 
@@ -167,3 +168,5 @@ node_modules
 
 # misc
 .DS_Store
+
+server/.env
