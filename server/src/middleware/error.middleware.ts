@@ -1,12 +1,16 @@
 import {Request, Response, NextFunction} from "express";
-import logger from "../config/logger";
+import logger from "../config/logger.config";
 
-function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
     logger.error(err.message);
-
+    logger.error(err.stack);
+    if (res.headersSent) {
+        return next(err)
+    }
     res.status(500).json({
-        message: "Internal Server Error",
+        error: {
+            message: "Internal server error",
+        },
     });
 }
 
-export default errorHandler;

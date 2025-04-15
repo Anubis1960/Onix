@@ -18,8 +18,19 @@ export class User {
 
     @Column({
         type: "varchar",
+        length: 512,
         nullable: false,
-        select: false
     })
     password: string;
+
+    @Column({
+        type: "varchar",
+        length: 255,
+        nullable: false,
+    })
+    salt: string;
+
+    toString() {
+        return `User { user_id: ${this.id}, email: ${this.email}`;
+    }
 }
