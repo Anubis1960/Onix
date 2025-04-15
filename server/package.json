@@ -9,7 +9,10 @@
     "start": "node ./build/index.js",
     "dev": "nodemon src/index.ts",
     "migration:generate:users": "typeorm migration:create ./src/migrations/users",
-    "migration:run": "typeorm migration:run --dataSource ./build/config/datasource.config.js"
+    "migration:generate:file-vault": "typeorm migration:create ./src/migrations/file-vault",
+    "migration:generate:file-shared": "typeorm migration:create ./src/migrations/file-shared",
+    "migration:run": "typeorm migration:run --dataSource ./build/config/datasource.config.js",
+    "migration:revert": "typeorm migration:revert --dataSource ./build/config/datasource.config.js"
   },
   "keywords": [],
   "author": "",
