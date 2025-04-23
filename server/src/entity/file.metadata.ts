@@ -1,11 +1,13 @@
-import {Column, PrimaryGeneratedColumn} from "typeorm";
+import {Column, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
 
 export abstract class FileMetadata {
-    @PrimaryGeneratedColumn({
+    @PrimaryColumn({
         name: "file_id",
-        type: "bigint",
+        generated: "uuid",
+        type: "uuid",
+        default: () => "uuid_generate_v4()",
     })
-    id: number;
+    id: string;
 
     @Column({
         name: "name",

@@ -1,12 +1,8 @@
 import {UserRepository} from "../repository/user.repository";
 import logger from "../config/logger.config";
-import {UserDAO} from "../dao/UserDAO";
-import {hashPassword, decryptPassword} from "../utils/crypt";
-
-type HashData = {
-    salt: string;
-    hash: string;
-}
+import {UserDto} from "../dto/user.dto";
+import {hashPassword} from "../utils/crypt";
+import {User} from "../entity/user.entity";
 
 export class UserService {
     async getAllUsers() {
@@ -16,27 +12,19 @@ export class UserService {
             return [];
         }
 
-        let userDAOs = users.map(user => {
-            const userDAO = new UserDAO();
-            userDAO.id = user.id;
-            userDAO.email = user.email;
-            return userDAO;
+        return users.map(user => {
+            return new UserDto(user.id, user.email);
         });
-        logger.info(userDAOs.toString());
-        return userDAOs;
     }
 
-    async getUserById(id: number) {
+    async getUserById(id: string) {
         const user = await UserRepository.findById(id);
         if (!user) {
             logger.info("User not found for ID:", id)
             return {status: 404, message: "User not found"};
         }
         logger.info(user.toString());
-        const userDAO = new UserDAO();
-        userDAO.id = user.id;
-        userDAO.email = user.email;
-        return userDAO;
+        return new UserDto(user.id, user.email);
     }
 
     async createUser(userData: any) {
@@ -45,59 +33,35 @@ export class UserService {
         if (existingUser) {
             return {status: 409, message: "User already exists"};
         }
-        let hashed: HashData = hashPassword(password);
-        const newUser = await UserRepository.createUser(email, hashed.hash, hashed.salt);
-        const userDAO = new UserDAO();
-        userDAO.id = newUser.id;
-        userDAO.email = newUser.email;
-        logger.info(userDAO.toString());
-        return userDAO;
+        let hash: string = hashPassword(password);
+        const newUser = await UserRepository.createUser(email, hash);
+        return new UserDto(newUser.id, newUser.email);
 
     }
 
-    async updateUser(id: number, updatedData: any) {
+    async updateUser(id: string, updatedData: { email?: string; password?: string }) {
         const user = await UserRepository.findById(id);
         if (!user) {
             return {status: 404, message: "User not found"};
         }
-        let partialUser = {
-            email: user.email,
-            password: user.password,
-            salt: user.salt
-        }
-
-        if (updatedData.email) {
-            partialUser["email"] = updatedData.email;
-        }
-
-        if (updatedData.password) {
-            let hashed: HashData = hashPassword(updatedData.password);
-            partialUser["password"] = hashed.hash;
-            partialUser["salt"] = hashed.salt;
+        let partialUser: Partial<Partial<User>> = {
+            email: updatedData.email,
+            password: updatedData.password ? hashPassword(updatedData.password) : undefined
         }
 
         await UserRepository.updateUser(id, partialUser);
-        const userDAO = new UserDAO();
-
-        userDAO.id = user.id;
-        userDAO.email = user.email;
-        logger.info(userDAO.toString());
-
-        return userDAO;
+        return new UserDto(
+            user.id,
+            partialUser.email || user.email
+        );
     }
 
-    async deleteUser(id: number) {
+    async deleteUser(id: string) {
         const user = await UserRepository.findById(id);
         if (!user) {
             return {status: 404, message: "User not found"};
         }
         await UserRepository.deleteUser(id);
-        const userDAO = new UserDAO();
-        userDAO.id = user.id
-        userDAO.email = user.email;
-
-        logger.info(userDAO.toString());
-
-        return userDAO;
+        return new UserDto(user.id, user.email);
     }
 }

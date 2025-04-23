@@ -1,23 +1,11 @@
-import crypto from "crypto";
+import bcrypt from "bcrypt";
 
-export function hashPassword(password: string) {
-    let salt = crypto.randomBytes(128).toString("base64");
-    let iterations = 10000;
-    let keylen = 256;
-    let digest = "sha512";
-    let hash = crypto.pbkdf2Sync(password, salt, iterations, keylen, digest);
-    let hashString = hash.toString("base64");
-    console.log(hashString.length);
-    return {
-        salt: salt,
-        hash: hashString,
-    };
+export function hashPassword(password: string): string {
+    let hash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+    console.log(hash);
+    return hash
 }
 
-export function decryptPassword(password: string, salt: string) {
-    let iterations = 10000;
-    let keylen = 256;
-    let digest = "sha512";
-    let hash = crypto.pbkdf2Sync(password, salt, iterations, keylen, digest);
-    return hash.toString("base64");
+export function comparePassword(password: string, hash: string): boolean {
+    return bcrypt.compareSync(password, hash);
 }

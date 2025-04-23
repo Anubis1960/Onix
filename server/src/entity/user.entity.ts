@@ -1,12 +1,15 @@
-import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, OneToMany} from "typeorm";
+import {FileVault} from "./file-vault.entity";
 
 @Entity("user", {schema: "public"})
 export class User {
-    @PrimaryGeneratedColumn({
-        type: "bigint",
-        name: "user_id"
+    @PrimaryColumn({
+        name: "user_id",
+        generated: "uuid",
+        type: "uuid",
+        default: () => "uuid_generate_v4()",
     })
-    id: number;
+    id: string;
 
     @Column({
         type: "varchar",
@@ -18,17 +21,13 @@ export class User {
 
     @Column({
         type: "varchar",
-        length: 512,
+        length: 511,
         nullable: false,
     })
     password: string;
 
-    @Column({
-        type: "varchar",
-        length: 255,
-        nullable: false,
-    })
-    salt: string;
+    @OneToMany((type) => FileVault, (file) => file.user)
+    files: FileVault[];
 
     toString() {
         return `User { user_id: ${this.id}, email: ${this.email}`;

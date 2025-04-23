@@ -13,18 +13,18 @@ export const UserRepository = dataSource.getRepository(User).extend({
             .getOne();
     },
 
-    findById(id: number) {
+    findById(id: string) {
         return this.createQueryBuilder("user")
             .where("user.id = :id", {id})
             .getOne();
     },
 
-    createUser(email: string, password: string, salt: string) {
-        const user = this.create({email, password, salt});
+    createUser(email: string, password: string) {
+        const user = this.create({email, password});
         return this.save(user);
     },
 
-    updateUser(id: number, updatedData: Partial<User>) {
+    updateUser(id: string, updatedData: Partial<User>) {
         return this.createQueryBuilder("user")
             .update(User)
             .set(updatedData)
@@ -32,7 +32,7 @@ export const UserRepository = dataSource.getRepository(User).extend({
             .execute();
     },
 
-    deleteUser(id: number) {
+    deleteUser(id: string) {
         return this.createQueryBuilder("user")
             .delete()
             .from(User)

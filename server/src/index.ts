@@ -9,6 +9,9 @@ import {errorHandler} from "./middleware/error.middleware";
 import bodyParser from "body-parser";
 import cors from "cors";
 import {userRouter} from "./routes/user.route";
+import {fileVaultRouter} from "./routes/file-vault.route";
+import {fileSharedRouter} from "./routes/file-shared.route";
+import {passwordManagerRouter} from "./routes/password-manager.route";
 
 const app: Express = express();
 
@@ -19,6 +22,9 @@ console.log(PORT);
 app.use(cors())
 app.use(bodyParser.json());
 app.use('/api/users', userRouter);
+app.use('/api/file-vault', fileVaultRouter);
+app.use('/api/file-shared', fileSharedRouter);
+app.use('/api/password-manager', passwordManagerRouter);
 app.use(errorHandler);
 
 

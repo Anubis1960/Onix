@@ -15,7 +15,7 @@ export class UserController {
     };
 
     async getUserById(req: Request, res: Response) {
-        const userId = Number(req.params.id);
+        const userId = req.params.id;
         const user = await this.userService.getUserById(userId);
         if ("status" in user) {
             res.status(user.status).json({message: user.message});
@@ -26,6 +26,7 @@ export class UserController {
 
     async createUser(req: Request, res: Response) {
         const userData = req.body;
+        logger.info(userData);
         if (!userData.email || !userData.password) {
             res.status(400).json({message: "Email and password are required"});
             return;
@@ -39,7 +40,7 @@ export class UserController {
     }
 
     async updateUser(req: Request, res: Response) {
-        const userId = Number(req.params.id);
+        const userId = req.params.id;
         const updatedData = req.body;
         if (!updatedData.email && !updatedData.password) {
             res.status(400).json({message: "Email or password is required"});
@@ -61,7 +62,7 @@ export class UserController {
     }
 
     async deleteUser(req: Request, res: Response) {
-        const userId = Number(req.params.id);
+        const userId = req.params.id;
         if (!userId) {
             res.status(400).json({message: "User ID is required"});
             return;
