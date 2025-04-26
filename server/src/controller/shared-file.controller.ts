@@ -2,6 +2,19 @@ import {Request, Response} from "express";
 import logger from "../config/logger.config";
 import {SharedFileService} from "../service/shared-file.service";
 
+/**
+ * SharedFileController handles shared file-related requests.
+ * @class SharedFileController
+ * @param {SharedFileService} sharedFileService - Instance of SharedFileService for shared file-related operations.
+ * @constructor
+ * @method getAllFiles - Retrieves all shared files.
+ * @method getFileById - Retrieves a shared file by its ID.
+ * @method createFile - Creates a new shared file instance.
+ * @method updateFile - Updates an existing shared file.
+ * @method deleteFile - Deletes a shared file.
+ * @method uploadFile - Uploads a shared file.
+ * @method downloadFile - Downloads a shared file.
+ */
 export class SharedFileController {
     private sharedFileService: SharedFileService;
 
@@ -17,8 +30,8 @@ export class SharedFileController {
     async getFileById(req: Request, res: Response) {
         const fileId = req.params.id;
         const file = await this.sharedFileService.getFileById(fileId);
-        if ("status" in file) {
-            res.status(file.status).json({message: file.message});
+        if (file === null) {
+            res.status(404).json({message: "File not found"});
             return;
         }
         res.status(200).json(file);

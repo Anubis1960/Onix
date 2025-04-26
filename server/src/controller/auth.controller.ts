@@ -2,6 +2,15 @@ import {Request, Response} from 'express';
 import logger from '../config/logger.config';
 import {UserService} from '../service/user.service';
 
+/**
+ * AuthController handles authentication-related requests.
+ * @class AuthController
+ * @constructor
+ * @param {UserService} userService - Instance of UserService for user-related operations.
+ * @method login - Handles user login.
+ * @method register - Handles user registration.
+ * @method googleCallback - Handles Google OAuth callback.
+ */
 export class AuthController {
     private userService: UserService;
 

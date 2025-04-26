@@ -1,5 +1,10 @@
 import {FileMetadataDto} from "./file.metadata.dto";
 
+/**
+ * @class FileDto
+ * @extends FileMetadataDto
+ * @description Data Transfer Object for file.
+ */
 export class FileDto extends FileMetadataDto {
     private _folderId: string;
 

@@ -1,5 +1,10 @@
 import {Column, PrimaryColumn} from "typeorm";
 
+/**
+ * @class FileMetadata
+ * @description This class represents the metadata of a file.
+ * This class reflects the database table structure and is used for ORM mapping.
+ */
 export abstract class FileMetadata {
     @PrimaryColumn({
         name: "file_id",

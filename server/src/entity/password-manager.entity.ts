@@ -1,5 +1,10 @@
 import {Column, Entity, OneToMany, PrimaryColumn} from "typeorm";
 
+/**
+ * @class PasswordManager
+ * @description This class represents a password manager entity with its metadata
+ * This class reflects the database table structure and is used for ORM mapping.
+ */
 @Entity("password_manager", {schema: "public"})
 export class PasswordManager {
     @PrimaryColumn({

@@ -1,6 +1,7 @@
 import express from "express";
 import {FileController} from "../controller/file.controller";
 import {authMiddleware} from "../middleware/auth.middleware";
+import upload from "../config/multer.config";
 
 const router = express.Router();
 const fileController = new FileController();
@@ -20,6 +21,7 @@ router.get(
 router.post(
     "/",
     authMiddleware,
+    upload.single('file'),
     fileController.createFile.bind(fileController)
 );
 
@@ -38,14 +40,8 @@ router.delete(
 router.get(
     "/folder/:folderId",
     authMiddleware,
-    fileController.getFileByFolderId.bind(fileController)
+    fileController.getFilesByFolderId.bind(fileController)
 );
-
-router.post(
-    "/upload",
-    authMiddleware,
-    fileController.uploadFile.bind(fileController)
-)
 
 router.get(
     "/download/:id",

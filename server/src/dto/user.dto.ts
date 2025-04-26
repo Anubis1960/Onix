@@ -1,3 +1,7 @@
+/**
+ * @class UserDto
+ * @description Data Transfer Object for User
+ */
 export class UserDto {
     private _id: string;
     private _email: string;
@@ -6,7 +10,6 @@ export class UserDto {
         this._id = id;
         this._email = email;
     }
-
 
     get id(): string {
         return this._id;

@@ -2,6 +2,12 @@ import {Folder} from "../entity/folder.entity";
 import logger from "../config/logger.config";
 import datasource from "../config/datasource.config";
 
+/**
+ * @const FolderRepository
+ * @description This is a custom repository for the Folder entity.
+ * It extends the default repository provided by TypeORM and adds custom methods for folder operations.
+ * This repository is used to interact with the folder table in the database.
+ */
 export const FolderRepository = datasource.getRepository(Folder).extend({
     findAll() {
         return this.createQueryBuilder("folder_vault")

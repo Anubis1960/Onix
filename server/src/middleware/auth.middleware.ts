@@ -4,6 +4,12 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
+/**
+ * * Middleware to authenticate requests using JWT.
+ * @param req
+ * @param res
+ * @param next
+ */
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     // const headers = req.headers.authorization;
     // if (!headers) {

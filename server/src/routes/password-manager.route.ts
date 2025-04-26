@@ -38,7 +38,7 @@ router.delete(
 router.get(
     "/user/:userId",
     authMiddleware,
-    passwordManagerController.getPasswordByUserId.bind(passwordManagerController)
+    passwordManagerController.getPasswordsByUserId.bind(passwordManagerController)
 );
 
 export {router as passwordManagerRouter};

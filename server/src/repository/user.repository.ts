@@ -1,6 +1,12 @@
 import dataSource from "../config/datasource.config";
 import {User} from "../entity/user.entity";
 
+/**
+ * @class UserRepository
+ * @description This class provides methods to interact with the User entity in the database.
+ * It extends the default repository provided by TypeORM and adds custom methods for user operations.
+ * This repository is used to interact with the user table in the database.
+ */
 export const UserRepository = dataSource.getRepository(User).extend({
     findAll() {
         return this.createQueryBuilder("user")

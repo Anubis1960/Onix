@@ -2,6 +2,11 @@ import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn} from "t
 import {User} from "./user.entity";
 import {File} from "./file.entity";
 
+/**
+ * @class Folder
+ * @description This class represents a folder entity with its metadata
+ * This class reflects the database table structure and is used for ORM mapping.
+ */
 @Entity("folder", {schema: "public"})
 export class Folder {
     @PrimaryColumn({
@@ -14,7 +19,7 @@ export class Folder {
 
     @Column({
         name: "folder_name",
-        type: "string",
+        type: "varchar",
         nullable: false,
     })
     folderName: string;

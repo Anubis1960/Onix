@@ -1,7 +1,19 @@
-import {PasswordManagerService} from "../service/password-manager.route";
+import {PasswordManagerService} from "../service/password-manager.service";
 import logger from "../config/logger.config";
 import {Request, Response} from "express";
 
+/**
+ * PasswordManagerController handles password management-related requests.
+ * @class PasswordManagerController
+ * @param {PasswordManagerService} passwordManagerService - Instance of PasswordManagerService for password management operations.
+ * @constructor
+ * @method getAllPassword - Retrieves all passwords.
+ * @method getPasswordById - Retrieves a password by its ID.
+ * @method createPassword - Creates a new password instance.
+ * @method updatePassword - Updates an existing password.
+ * @method deletePassword - Deletes a password.
+ * @method getPasswordsByUserId - Retrieves passwords by user ID.
+ */
 export class PasswordManagerController {
     private passwordManagerService: PasswordManagerService
 
@@ -17,8 +29,8 @@ export class PasswordManagerController {
     async getPasswordById(req: Request, res: Response) {
         const passwordId = req.params.id;
         const password = await this.passwordManagerService.getPasswordById(passwordId);
-        if ("status" in password) {
-            res.status(password.status).json({message: password.message});
+        if (password === null) {
+            res.status(404).json({message: "Password not found"});
             return;
         }
         res.status(200).json(password);
@@ -70,13 +82,9 @@ export class PasswordManagerController {
         res.status(200).json(deletedPassword);
     }
 
-    async getPasswordByUserId(req: Request, res: Response) {
+    async getPasswordsByUserId(req: Request, res: Response) {
         const userId = req.params.userId;
-        const passwords = await this.passwordManagerService.getPasswordByUserId(userId);
-        if ("status" in passwords) {
-            res.status(passwords.status).json({message: passwords.message});
-            return;
-        }
+        const passwords = await this.passwordManagerService.getPasswordsByUserId(userId);
         res.status(200).json(passwords);
     }
 }

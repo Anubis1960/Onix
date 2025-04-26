@@ -1,6 +1,12 @@
 import datasource from "../config/datasource.config";
 import {PasswordManager} from "../entity/password-manager.entity";
 
+/**
+ * @const PasswordManagerRepository
+ * @description This is a custom repository for the PasswordManager entity.
+ * It extends the default repository provided by TypeORM and adds custom methods for password manager operations.
+ * This repository is used to interact with the password_manager table in the database.
+ */
 export const PasswordManagerRepository = datasource.getRepository(PasswordManager).extend({
     findAll() {
         return this.createQueryBuilder("password_manager")

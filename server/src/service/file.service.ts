@@ -1,7 +1,18 @@
 import logger from "../config/logger.config";
 import {FileRepository} from "../repository/file.repository";
 import {FileDto} from "../dto/file.dto";
+import supabase from "../config/supabase.config";
 
+/**
+ * @class FileService
+ * @description This class handles file-related operations.
+ * @method getAllFiles - Retrieves all files.
+ * @method getFileById - Retrieves a file by its ID.
+ * @method createFile - Creates a new file.
+ * @method updateFile - Updates an existing file.
+ * @method deleteFile - Deletes a file.
+ * @method getFilesByFolderId - Retrieves files by folder ID.
+ */
 export class FileService {
     async getAllFiles() {
         let files = await FileRepository.findAll();
@@ -17,8 +28,7 @@ export class FileService {
     async getFileById(id: string) {
         const file = await FileRepository.findById(id);
         if (!file) {
-            logger.info("File not found for ID:", id)
-            return {status: 404, message: "File not found"};
+            return null
         }
         logger.info(file.toString());
         return new FileDto(file.fileName, file.fileSize, file.fileType, file.folderId);
@@ -70,10 +80,11 @@ export class FileService {
         return new FileDto(file.fileName, file.fileSize, file.fileType, file.folderId);
     }
 
-    async getFileByFolderId(folderId: string) {
+    async getFilesByFolderId(folderId: string) {
         const files = await FileRepository.findByFolderId(folderId);
         if (!files) {
-            return {status: 404, message: "Files not found"};
+            logger.info("No files found for folder ID:", folderId);
+            return [];
         }
         return files.map(file => {
             return new FileDto(file.fileName, file.fileSize, file.fileType, file.folderId)

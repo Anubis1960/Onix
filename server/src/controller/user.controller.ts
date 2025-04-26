@@ -2,6 +2,17 @@ import {UserService} from "../service/user.service";
 import {Request, Response} from "express";
 import logger from "../config/logger.config";
 
+/**
+ * UserController handles user-related requests.
+ * @class UserController
+ * @param {UserService} userService - Instance of UserService for user-related operations.
+ * @constructor
+ * @method getAllUsers - Retrieves all users.
+ * @method getUserById - Retrieves a user by their ID.
+ * @method createUser - Creates a new user instance.
+ * @method updateUser - Updates an existing user.
+ * @method deleteUser - Deletes a user.
+ */
 export class UserController {
     private userService: UserService;
 
@@ -17,8 +28,8 @@ export class UserController {
     async getUserById(req: Request, res: Response) {
         const userId = req.params.id;
         const user = await this.userService.getUserById(userId);
-        if ("status" in user) {
-            res.status(user.status).json({message: user.message});
+        if (user === null) {
+            res.status(404).json({message: "User not found"});
             return;
         }
         res.status(200).json(user);

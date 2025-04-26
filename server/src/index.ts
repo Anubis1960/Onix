@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from "express";
 import {Express} from "express";
-import datasource from "./config/datasource.config";
 import logger from "./config/logger.config";
 import {errorHandler} from "./middleware/error.middleware";
 import bodyParser from "body-parser";
@@ -15,7 +14,6 @@ import {folderRouter} from "./routes/folder.routes";
 import {authRouter} from "./routes/auth.route";
 import {passwordManagerRouter} from "./routes/password-manager.route";
 import passport from "passport";
-
 
 const app: Express = express();
 

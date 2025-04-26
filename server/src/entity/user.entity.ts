@@ -2,6 +2,11 @@ import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, OneToMany} from "
 import {File} from "./file.entity";
 import {Folder} from "./folder.entity";
 
+/**
+ * @class User
+ * @description This class represents a user entity with its metadata
+ * This class reflects the database table structure and is used for ORM mapping.
+ */
 @Entity("user", {schema: "public"})
 export class User {
     @PrimaryColumn({

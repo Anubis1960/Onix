@@ -38,7 +38,13 @@ router.delete(
 router.get(
     "/user/:userId",
     authMiddleware,
-    folderController.getFolderByUserId.bind(folderController)
+    folderController.getFoldersByUserId.bind(folderController)
 );
+
+router.get(
+    "/children/:parentId",
+    authMiddleware,
+    folderController.getChildrenByParentId.bind(folderController)
+)
 
 export {router as folderRouter};

@@ -1,7 +1,17 @@
 import logger from "../config/logger.config";
 import {SharedFileRepository} from "../repository/shared-file.repository";
 import {SharedFileDto} from "../dto/shared-file.dto";
+import supabase from "../config/supabase.config";
 
+/**
+ * @class SharedFileService
+ * @description This class provides methods to manage shared files.
+ * @method getAllFiles - Retrieves all shared files.
+ * @method getFileById - Retrieves a shared file by its ID.
+ * @method createFile - Creates a new shared file.
+ * @method updateFile - Updates an existing shared file.
+ * @method deleteFile - Deletes a shared file.
+ */
 export class SharedFileService {
     async getAllFiles() {
         let files = await SharedFileRepository.findAll();
@@ -9,7 +19,6 @@ export class SharedFileService {
             logger.info("No files found");
             return [];
         }
-
         return files.map(file => {
             return new SharedFileDto(file.fileName, file.fileSize, file.fileType, file.downloadsRemaining, file.timeToLive, file.createdAt);
         });
@@ -19,7 +28,7 @@ export class SharedFileService {
         const file = await SharedFileRepository.findById(id);
         if (!file) {
             logger.info("File not found for ID:", id)
-            return {status: 404, message: "File not found"};
+            return null
         }
         logger.info(file.toString());
         return new SharedFileDto(file.fileName, file.fileSize, file.fileType, file.downloadsRemaining, file.timeToLive, file.createdAt);

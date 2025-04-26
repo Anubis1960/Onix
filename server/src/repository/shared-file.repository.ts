@@ -1,6 +1,12 @@
 import datasource from "../config/datasource.config";
 import {SharedFile} from "../entity/shared-file.entity";
 
+/**
+ * @const SharedFileRepository
+ * @description This is a custom repository for the SharedFile entity.
+ * It extends the default repository provided by TypeORM and adds custom methods for file operations.
+ * This repository is used to interact with the file_shared table in the database.
+ */
 export const SharedFileRepository = datasource.getRepository(SharedFile).extend({
     findAll() {
         return this.createQueryBuilder("file_shared")

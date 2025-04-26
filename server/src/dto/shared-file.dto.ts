@@ -1,5 +1,10 @@
 import {FileMetadataDto} from "./file.metadata.dto";
 
+/**
+ * @class SharedFileDto
+ * @extends FileMetadataDto
+ * @description Data Transfer Object for shared file.
+ */
 export class SharedFileDto extends FileMetadataDto {
     private _downloadsRemaining: number;
     private _timeToLive: number;
@@ -11,7 +16,6 @@ export class SharedFileDto extends FileMetadataDto {
         this._timeToLive = timeToLive;
         this._createdAt = createdAt;
     }
-
 
     get downloadsRemaining(): number {
         return this._downloadsRemaining;
@@ -36,7 +40,6 @@ export class SharedFileDto extends FileMetadataDto {
     set createdAt(value: Date) {
         this._createdAt = value;
     }
-
 
     toString(): string {
         return `FileSharedDTO { fileName: ${this.fileName}, fileSize: ${this.fileSize}, fileType: ${this.fileType}, downloadsRemaining: ${this.downloadsRemaining}, timeToLive: ${this.timeToLive}, createdAt: ${this.createdAt} }`;

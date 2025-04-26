@@ -1,3 +1,7 @@
+/**
+ * @class FolderDto
+ * @description Data Transfer Object for Folder
+ */
 export class FolderDto {
     private _folderId: string;
     private _folderName: string;

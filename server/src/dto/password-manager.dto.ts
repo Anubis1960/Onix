@@ -1,3 +1,7 @@
+/**
+ * @class PasswordManagerDto
+ * @description Data Transfer Object for PasswordManager.
+ */
 export class PasswordManagerDto {
     private _name: string;
     private _password: string;
@@ -6,7 +10,6 @@ export class PasswordManagerDto {
         this._name = name;
         this._password = password;
     }
-
 
     get name(): string {
         return this._name;

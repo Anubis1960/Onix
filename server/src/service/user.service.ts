@@ -4,6 +4,18 @@ import {UserDto} from "../dto/user.dto";
 import {hashPassword, comparePassword} from "../utils/crypt";
 import {User} from "../entity/user.entity";
 
+/**
+ * @class UserService
+ * @description UserService handles user-related operations such as fetching, creating, updating, and deleting users.
+ * @constructor
+ * @method getAllUsers - Retrieves all users.
+ * @method getUserById - Retrieves a user by their ID.
+ * @method createUser - Creates a new user.
+ * @method updateUser - Updates an existing user.
+ * @method deleteUser - Deletes a user.
+ * @method findByEmail - Finds a user by their email.
+ * @method findByEmailAndPassword - Finds a user by their email and password.
+ */
 export class UserService {
     async getAllUsers() {
         let users = await UserRepository.findAll();
@@ -11,7 +23,6 @@ export class UserService {
             logger.info("No users found");
             return [];
         }
-
         return users.map(user => {
             return new UserDto(user.id, user.email);
         });
@@ -21,7 +32,7 @@ export class UserService {
         const user = await UserRepository.findById(id);
         if (!user) {
             logger.info("User not found for ID:", id)
-            return {status: 404, message: "User not found"};
+            return null
         }
         logger.info(user.toString());
         return new UserDto(user.id, user.email);

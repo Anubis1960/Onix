@@ -1,6 +1,12 @@
 import datasource from "../config/datasource.config";
 import {File} from "../entity/file.entity";
 
+/**
+ * @const FileRepository
+ * @description This is a custom repository for the File entity.
+ * It extends the default repository provided by TypeORM and adds custom methods for file operations.
+ * This repository is used to interact with the file table in the database.
+ */
 export const FileRepository = datasource.getRepository(File).extend({
     findAll() {
         return this.createQueryBuilder("file_vault")

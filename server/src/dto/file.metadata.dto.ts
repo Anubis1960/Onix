@@ -1,3 +1,7 @@
+/**
+ * @class FileMetadataDto
+ * @description Data Transfer Object for file metadata.
+ */
 export abstract class FileMetadataDto {
     private _fileName: string;
     private _fileSize: number;
