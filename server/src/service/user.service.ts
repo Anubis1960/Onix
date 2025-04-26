@@ -1,7 +1,7 @@
 import {UserRepository} from "../repository/user.repository";
 import logger from "../config/logger.config";
 import {UserDto} from "../dto/user.dto";
-import {hashPassword} from "../utils/crypt";
+import {hashPassword, comparePassword} from "../utils/crypt";
 import {User} from "../entity/user.entity";
 
 export class UserService {
@@ -62,6 +62,25 @@ export class UserService {
             return {status: 404, message: "User not found"};
         }
         await UserRepository.deleteUser(id);
+        return new UserDto(user.id, user.email);
+    }
+
+    async findByEmail(id: string) {
+        const user = await UserRepository.findByEmail(id);
+        if (!user) {
+            return null
+        }
+        return new UserDto(user.id, user.email);
+    }
+
+    async findByEmailAndPassword(email: string, password: string) {
+        const user = await UserRepository.findByEmail(email);
+        if (!user) {
+            return null
+        }
+        if (!comparePassword(password, user.password)) {
+            return null
+        }
         return new UserDto(user.id, user.email);
     }
 }

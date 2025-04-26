@@ -1,7 +1,7 @@
 import datasource from "../config/datasource.config";
-import {FileShared} from "../entity/file-shared.entity";
+import {SharedFile} from "../entity/shared-file.entity";
 
-export const FileSharedRepository = datasource.getRepository(FileShared).extend({
+export const SharedFileRepository = datasource.getRepository(SharedFile).extend({
     findAll() {
         return this.createQueryBuilder("file_shared")
             .getMany();
@@ -13,14 +13,14 @@ export const FileSharedRepository = datasource.getRepository(FileShared).extend(
             .getOne();
     },
 
-    createFileShared(name: string, size: number, timeToLive: number, downloadsRemaining: number, path: string) {
-        const fileShared = this.create({name, path, size, timeToLive, downloadsRemaining});
+    createFileShared(fileName: string, fileSize: number, downloadsRemaining: number, timeToLive: number, storagePath: string) {
+        const fileShared = this.create({fileName, fileSize, downloadsRemaining, timeToLive, storagePath});
         return this.save(fileShared);
     },
 
-    updateFileShared(id: string, updatedData: Partial<FileShared>) {
+    updateFileShared(id: string, updatedData: Partial<SharedFile>) {
         return this.createQueryBuilder("file_shared")
-            .update(FileShared)
+            .update(SharedFile)
             .set(updatedData)
             .where("file_id = :id", {id})
             .execute();
@@ -29,7 +29,7 @@ export const FileSharedRepository = datasource.getRepository(FileShared).extend(
     deleteFileShared(id: string) {
         return this.createQueryBuilder("file_shared")
             .delete()
-            .from(FileShared)
+            .from(SharedFile)
             .where("file_id = :id", {id})
             .execute();
     },

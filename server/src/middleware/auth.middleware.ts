@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export const authorizationMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     // const headers = req.headers.authorization;
     // if (!headers) {
     //     res.status(401).json({message: "Authorization header is missing"});

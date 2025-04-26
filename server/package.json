@@ -12,6 +12,7 @@
     "migration:generate:file-vault": "typeorm migration:create ./src/migrations/file-vault",
     "migration:generate:file-shared": "typeorm migration:create ./src/migrations/file-shared",
     "migration:generate:password-manager": "typeorm migration:create ./src/migrations/password-manager",
+    "migration:generate:folder": "typeorm migration:create ./src/migrations/folder",
     "migration:run": "typeorm migration:run --dataSource ./build/config/datasource.config.js",
     "migration:revert": "typeorm migration:revert --dataSource ./build/config/datasource.config.js"
   },
@@ -23,6 +24,9 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-google-token": "^0.1.2",
     "pg": "^8.14.1",
     "typeorm": "^0.3.22",
     "winston": "^3.17.0"
@@ -32,6 +36,8 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/passport": "^1.0.17",
+    "@types/passport-google-oauth20": "^2.0.16",
     "copyfiles": "^2.4.1",
     "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.9",

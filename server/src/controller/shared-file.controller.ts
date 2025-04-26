@@ -1,22 +1,22 @@
 import {Request, Response} from "express";
 import logger from "../config/logger.config";
-import {FileSharedService} from "../service/file-shared.service";
+import {SharedFileService} from "../service/shared-file.service";
 
-export class FileSharedController {
-    private fileSharedService: FileSharedService;
+export class SharedFileController {
+    private sharedFileService: SharedFileService;
 
     constructor() {
-        this.fileSharedService = new FileSharedService();
+        this.sharedFileService = new SharedFileService();
     }
 
     async getAllFiles(req: Request, res: Response) {
-        const files = await this.fileSharedService.getAllFiles();
+        const files = await this.sharedFileService.getAllFiles();
         res.status(200).json(files);
     };
 
     async getFileById(req: Request, res: Response) {
         const fileId = req.params.id;
-        const file = await this.fileSharedService.getFileById(fileId);
+        const file = await this.sharedFileService.getFileById(fileId);
         if ("status" in file) {
             res.status(file.status).json({message: file.message});
             return;
@@ -30,7 +30,7 @@ export class FileSharedController {
             res.status(400).json({message: "Name and path are required"});
             return;
         }
-        const newFile = await this.fileSharedService.createFile(fileData);
+        const newFile = await this.sharedFileService.createFile(fileData);
         if ("status" in newFile) {
             res.status(newFile.status).json({message: newFile.message});
             return;
@@ -49,7 +49,7 @@ export class FileSharedController {
         if (updatedData.name) {
             updateFields.name = updatedData.name;
         }
-        const updatedFile = await this.fileSharedService.updateFile(fileId, updateFields);
+        const updatedFile = await this.sharedFileService.updateFile(fileId, updateFields);
         if ("status" in updatedFile) {
             res.status(updatedFile.status).json({message: updatedFile.message});
             return;
@@ -59,11 +59,18 @@ export class FileSharedController {
 
     async deleteFile(req: Request, res: Response) {
         const fileId = req.params.id;
-        const deletedFile = await this.fileSharedService.deleteFile(fileId);
+        const deletedFile = await this.sharedFileService.deleteFile(fileId);
         if ("status" in deletedFile) {
             res.status(deletedFile.status).json({message: deletedFile.message});
             return;
         }
         res.status(200).json(deletedFile);
+    }
+
+    async uploadFile(req: Request, res: Response) {
+
+    }
+
+    async downloadFile(req: Request, res: Response) {
     }
 }

@@ -1,8 +1,8 @@
 import {Column, CreateDateColumn, Entity} from "typeorm";
 import {FileMetadata} from "./file.metadata";
 
-@Entity("file_shared", {schema: "public"})
-export class FileShared extends FileMetadata {
+@Entity("shared_file", {schema: "public"})
+export class SharedFile extends FileMetadata {
     @Column({
         name: "downloads_remaining",
         type: "int2",

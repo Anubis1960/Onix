@@ -1,37 +1,37 @@
 import express from "express";
 import {UserController} from "../controller/user.controller";
-import {authorizationMiddleware} from "../middleware/authorization.middleware";
+import {authMiddleware} from "../middleware/auth.middleware";
 
 const router = express.Router();
 const userController = new UserController();
 
 router.get(
     "/",
-    authorizationMiddleware,
+    authMiddleware,
     userController.getAllUsers.bind(userController)
 );
 
 router.get(
     "/:id",
-    authorizationMiddleware,
+    authMiddleware,
     userController.getUserById.bind(userController)
 );
 
 router.post(
     "/",
-    authorizationMiddleware,
+    authMiddleware,
     userController.createUser.bind(userController)
 );
 
 router.put(
     "/:id",
-    authorizationMiddleware,
+    authMiddleware,
     userController.updateUser.bind(userController)
 );
 
 router.delete(
     "/:id",
-    authorizationMiddleware,
+    authMiddleware,
     userController.deleteUser.bind(userController)
 );
 

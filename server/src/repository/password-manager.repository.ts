@@ -1,5 +1,5 @@
 import datasource from "../config/datasource.config";
-import {PasswordManager} from "../entity/passward-manager.entity";
+import {PasswordManager} from "../entity/password-manager.entity";
 
 export const PasswordManagerRepository = datasource.getRepository(PasswordManager).extend({
     findAll() {

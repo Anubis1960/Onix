@@ -1,5 +1,6 @@
 import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, OneToMany} from "typeorm";
-import {FileVault} from "./file-vault.entity";
+import {File} from "./file.entity";
+import {Folder} from "./folder.entity";
 
 @Entity("user", {schema: "public"})
 export class User {
@@ -21,13 +22,13 @@ export class User {
 
     @Column({
         type: "varchar",
-        length: 511,
+        length: 60,
         nullable: false,
     })
     password: string;
 
-    @OneToMany((type) => FileVault, (file) => file.user)
-    files: FileVault[];
+    @OneToMany((type) => Folder, (folder) => folder.user)
+    folders: Folder[];
 
     toString() {
         return `User { user_id: ${this.id}, email: ${this.email}`;

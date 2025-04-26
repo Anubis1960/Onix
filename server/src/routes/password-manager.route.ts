@@ -1,43 +1,43 @@
 import express from "express";
 import {PasswordManagerController} from "../controller/password-manager.controller";
-import {authorizationMiddleware} from "../middleware/authorization.middleware";
+import {authMiddleware} from "../middleware/auth.middleware";
 
 const router = express.Router();
 const passwordManagerController = new PasswordManagerController();
 
 router.get(
     "/",
-    authorizationMiddleware,
+    authMiddleware,
     passwordManagerController.getAllPassword
 );
 
 router.get(
     "/:id",
-    authorizationMiddleware,
+    authMiddleware,
     passwordManagerController.getPasswordById.bind(passwordManagerController)
 );
 
 router.post(
     "/",
-    authorizationMiddleware,
+    authMiddleware,
     passwordManagerController.createPassword.bind(passwordManagerController)
 );
 
 router.put(
     "/:id",
-    authorizationMiddleware,
+    authMiddleware,
     passwordManagerController.updatePassword.bind(passwordManagerController)
 );
 
 router.delete(
     "/:id",
-    authorizationMiddleware,
+    authMiddleware,
     passwordManagerController.deletePassword.bind(passwordManagerController)
 );
 
 router.get(
     "/user/:userId",
-    authorizationMiddleware,
+    authMiddleware,
     passwordManagerController.getPasswordByUserId.bind(passwordManagerController)
 );
 

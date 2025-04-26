@@ -1,22 +1,22 @@
 import {Request, Response} from "express";
 import logger from "../config/logger.config";
-import {FileVaultService} from "../service/file-vault.service";
+import {FileService} from "../service/file.service";
 
-export class FileVaultController {
-    private fileVaultService: FileVaultService;
+export class FileController {
+    private fileService: FileService;
 
     constructor() {
-        this.fileVaultService = new FileVaultService();
+        this.fileService = new FileService();
     }
 
     async getAllFiles(req: Request, res: Response) {
-        const files = await this.fileVaultService.getAllFiles();
+        const files = await this.fileService.getAllFiles();
         res.status(200).json(files);
     };
 
     async getFileById(req: Request, res: Response) {
         const fileId = req.params.id;
-        const file = await this.fileVaultService.getFileById(fileId);
+        const file = await this.fileService.getFileById(fileId);
         if ("status" in file) {
             res.status(file.status).json({message: file.message});
             return;
@@ -31,7 +31,11 @@ export class FileVaultController {
             return;
         }
         logger.info(fileData);
-        const newFile = await this.fileVaultService.createFile(fileData);
+        const newFile = await this.fileService.createFile(fileData);
+        if ("status" in newFile) {
+            res.status(newFile.status).json({message: newFile.message});
+            return;
+        }
         res.status(201).json(newFile);
     }
 
@@ -46,7 +50,7 @@ export class FileVaultController {
         if (updatedData.name) {
             updateFields.name = updatedData.name;
         }
-        const updatedFile = await this.fileVaultService.updateFile(fileId, updateFields);
+        const updatedFile = await this.fileService.updateFile(fileId, updateFields);
         if ("status" in updatedFile) {
             res.status(updatedFile.status).json({message: updatedFile.message});
             return;
@@ -56,7 +60,7 @@ export class FileVaultController {
 
     async deleteFile(req: Request, res: Response) {
         const fileId = req.params.id;
-        const deletedFile = await this.fileVaultService.deleteFile(fileId);
+        const deletedFile = await this.fileService.deleteFile(fileId);
         if ("status" in deletedFile) {
             res.status(deletedFile.status).json({message: deletedFile.message});
             return;
@@ -64,13 +68,20 @@ export class FileVaultController {
         res.status(200).json(deletedFile);
     }
 
-    async getFileByUserId(req: Request, res: Response) {
-        const userId = req.params.userId;
-        const files = await this.fileVaultService.getFileByUserId(userId);
+    async getFileByFolderId(req: Request, res: Response) {
+        const folderId = req.params.folderId;
+        const files = await this.fileService.getFileByFolderId(folderId);
         if ("status" in files) {
             res.status(files.status).json({message: files.message});
             return;
         }
         res.status(200).json(files);
+    }
+
+    async uploadFile(req: Request, res: Response) {
+
+    }
+
+    async downloadFile(req: Request, res: Response) {
     }
 }

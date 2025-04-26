@@ -1,12 +1,12 @@
-import {FileVaultDto} from "./file-vault.dto";
+import {FileMetadataDto} from "./file.metadata.dto";
 
-export class FileSharedDTO extends FileVaultDto {
+export class SharedFileDto extends FileMetadataDto {
     private _downloadsRemaining: number;
     private _timeToLive: number;
     private _createdAt: Date;
 
-    constructor(name: string, size: number, downloadsRemaining: number, timeToLive: number, createdAt: Date) {
-        super(name, size);
+    constructor(fileName: string, fileSize: number, fileType: string, downloadsRemaining: number, timeToLive: number, createdAt: Date) {
+        super(fileName, fileSize, fileType);
         this._downloadsRemaining = downloadsRemaining;
         this._timeToLive = timeToLive;
         this._createdAt = createdAt;
@@ -37,7 +37,8 @@ export class FileSharedDTO extends FileVaultDto {
         this._createdAt = value;
     }
 
-    toString() {
-        return `FileSharedDTO { name: ${this.name}, size: ${this.size}, downloadsRemaining: ${this._downloadsRemaining}, timeToLive: ${this._timeToLive}, createdAt: ${this._createdAt} }`;
+
+    toString(): string {
+        return `FileSharedDTO { fileName: ${this.fileName}, fileSize: ${this.fileSize}, fileType: ${this.fileType}, downloadsRemaining: ${this.downloadsRemaining}, timeToLive: ${this.timeToLive}, createdAt: ${this.createdAt} }`;
     }
 }

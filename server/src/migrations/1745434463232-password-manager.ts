@@ -5,15 +5,37 @@ export class PasswordManager1745434463232 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(
             `
-                CREATE TABLE "password_manager"
+                CREATE TABLE IF NOT EXISTS "password_manager"
                 (
-                    "password_id" uuid                   NOT NULL DEFAULT uuid_generate_v4(),
-                    "user_id"     uuid                   NOT NULL,
-                    "name"        character varying(255) NOT NULL,
-                    "password"    character varying(255) NOT NULL,
-                    PRIMARY KEY ("password_id"),
-                    FOREIGN KEY ("user_id") REFERENCES public."user" ("user_id") ON DELETE CASCADE
-                )
+                    "password_id"
+                    uuid
+                    NOT
+                    NULL
+                    DEFAULT
+                    uuid_generate_v4
+                (
+                ),
+                    "user_id" uuid NOT NULL,
+                    "name" varchar
+                (
+                    255
+                ) NOT NULL,
+                    "password" varchar
+                (
+                    255
+                ) NOT NULL,
+                    PRIMARY KEY
+                (
+                    "password_id"
+                ),
+                    FOREIGN KEY
+                (
+                    "user_id"
+                ) REFERENCES public."user"
+                (
+                    "user_id"
+                ) ON DELETE CASCADE
+                    )
             `, undefined);
     }
 

@@ -1,7 +1,7 @@
 import datasource from "../config/datasource.config";
-import {FileVault} from "../entity/file-vault.entity";
+import {File} from "../entity/file.entity";
 
-export const FileVaultRepository = datasource.getRepository(FileVault).extend({
+export const FileRepository = datasource.getRepository(File).extend({
     findAll() {
         return this.createQueryBuilder("file_vault")
             .getMany();
@@ -13,30 +13,30 @@ export const FileVaultRepository = datasource.getRepository(FileVault).extend({
             .getOne();
     },
 
-    createFileVault(name: string, path: string, userId: string, size: number) {
-        const fileVault = this.create({name, path, userId, size});
-        return this.save(fileVault);
+    createFile(fileName: string, storagePath: string, fileSize: number, fileType: string, folderId: string) {
+        const file = this.create({fileName, storagePath, fileSize, fileType, folderId});
+        return this.save(file);
     },
 
-    updateFileVault(id: string, updatedData: Partial<FileVault>) {
+    updateFile(id: string, updatedData: Partial<File>) {
         return this.createQueryBuilder("file_vault")
-            .update(FileVault)
+            .update(File)
             .set(updatedData)
             .where("file_id = :id", {id})
             .execute();
     },
 
-    deleteFileVault(id: string) {
+    deleteFile(id: string) {
         return this.createQueryBuilder("file_vault")
             .delete()
-            .from(FileVault)
+            .from(File)
             .where("file_id = :id", {id})
             .execute();
     },
 
-    findByUserId(userId: string) {
+    findByFolderId(folderId: string) {
         return this.createQueryBuilder("file_vault")
-            .where("file_vault.user_id = :userId", {userId})
+            .where("file_vault.folder_id = :folderId", {folderId})
             .getMany();
     },
 })

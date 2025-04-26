@@ -1,4 +1,4 @@
-import {Column, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import {Column, PrimaryColumn} from "typeorm";
 
 export abstract class FileMetadata {
     @PrimaryColumn({
@@ -10,22 +10,29 @@ export abstract class FileMetadata {
     id: string;
 
     @Column({
-        name: "name",
+        name: "file_name",
         type: "varchar",
         length: 255,
     })
-    name: string;
+    fileName: string;
 
     @Column({
-        name: "size",
+        name: "file_size",
         type: "int",
     })
-    size: number;
+    fileSize: number;
 
     @Column({
-        name: "path",
+        name: "file_type",
+        type: "varchar",
+        length: 100,
+    })
+    fileType: string;
+
+    @Column({
+        name: "storage_path",
         type: "varchar",
         length: 255,
     })
-    path: string;
+    storagePath: string;
 }
