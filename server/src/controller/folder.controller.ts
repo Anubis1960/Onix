@@ -27,7 +27,7 @@ export class FolderController {
     async getAllFolders(req: Request, res: Response) {
         const folders = await this.folderService.getAllFolders();
         res.status(200).json(folders);
-    };
+    }
 
     async getFolderById(req: Request, res: Response) {
         const folderId = req.params.id;
@@ -41,12 +41,16 @@ export class FolderController {
 
     async createFolder(req: Request, res: Response) {
         const folderData = req.body;
-        if (!folderData.name) {
-            res.status(400).json({message: "Name is required"});
+        if (!folderData.name || !folderData.userId || !folderData.parentId) {
+            res.status(400).json({message: "Name, userId and parentId are required"});
             return;
         }
         logger.info(folderData);
         const newFolder = await this.folderService.createFolder(folderData);
+        if ("status" in newFolder) {
+            res.status(newFolder.status).json({message: newFolder.message});
+            return;
+        }
         res.status(201).json(newFolder);
     }
 
@@ -57,11 +61,7 @@ export class FolderController {
             res.status(400).json({message: "Name is required"});
             return;
         }
-        const updateFields: { name?: string } = {};
-        if (updatedData.name) {
-            updateFields.name = updatedData.name;
-        }
-        const updatedFolder = await this.folderService.updateFolder(folderId, updateFields);
+        const updatedFolder = await this.folderService.updateFolder(folderId, updatedData);
         if ("status" in updatedFolder) {
             res.status(updatedFolder.status).json({message: updatedFolder.message});
             return;
@@ -70,6 +70,7 @@ export class FolderController {
     }
 
     async deleteFolder(req: Request, res: Response) {
+        //TODO Implement cascade delete for folders and files in db and storage
         const folderId = req.params.id;
         const deletedFolder = await this.folderService.deleteFolder(folderId);
         if ("status" in deletedFolder) {
@@ -88,9 +89,10 @@ export class FolderController {
     async getChildrenByParentId(req: Request, res: Response) {
         const parentId = req.params.parentId;
         const result = {
-            files: this.fileService.getFilesByFolderId(parentId),
-            folders: this.folderService.getFoldersByParentId(parentId)
+            files: await this.fileService.getFilesByFolderId(parentId),
+            folders: await this.folderService.getFoldersByParentId(parentId)
         }
+        logger.info(result);
         res.status(200).json(result);
     }
 

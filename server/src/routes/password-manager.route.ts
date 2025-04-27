@@ -8,7 +8,7 @@ const passwordManagerController = new PasswordManagerController();
 router.get(
     "/",
     authMiddleware,
-    passwordManagerController.getAllPassword
+    passwordManagerController.getAllPassword.bind(passwordManagerController)
 );
 
 router.get(

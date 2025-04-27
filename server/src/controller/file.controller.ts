@@ -49,22 +49,34 @@ export class FileController {
             size: req.file.size,
             type: req.file.mimetype,
             folderId: req.body.folderId,
-            storagePath: req.file.path
+            userId: req.body.userId,
         };
+        logger.info(fileData);
+        if (!fileData.name || !fileData.type || !fileData.folderId || !fileData.userId) {
+            res.status(400).json({message: "Name, size, type, folderId and userId are required"});
+            return;
+        }
+        const newFile = await this.fileService.createFile(fileData);
+        if ("status" in newFile) {
+            res.status(newFile.status).json({message: newFile.message});
+            return;
+        }
+        const storagePath = `${fileData.userId}/${newFile.id}/${fileData.name}`;
+        // TODO: Upload the file to the storage
+        res.status(201).json(newFile);
     }
 
     async updateFile(req: Request, res: Response) {
         const fileId = req.params.id;
         const updatedData = req.body;
-        if (!updatedData.name) {
-            res.status(400).json({message: "Name is required"});
+        if (!updatedData) {
+            res.status(400).json({message: "Fields are required"});
             return;
         }
-        const updateFields: { name?: string } = {};
+        const updatedFile = await this.fileService.updateFile(fileId, updatedData);
         if (updatedData.name) {
-            updateFields.name = updatedData.name;
+            // TODO: Update the file name in the storage
         }
-        const updatedFile = await this.fileService.updateFile(fileId, updateFields);
         if ("status" in updatedFile) {
             res.status(updatedFile.status).json({message: updatedFile.message});
             return;
@@ -79,6 +91,7 @@ export class FileController {
             res.status(deletedFile.status).json({message: deletedFile.message});
             return;
         }
+        // TODO: Delete the file from the storage
         res.status(200).json(deletedFile);
     }
 
@@ -89,5 +102,6 @@ export class FileController {
     }
 
     async downloadFile(req: Request, res: Response) {
+        // TODO: Implement file download logic
     }
 }

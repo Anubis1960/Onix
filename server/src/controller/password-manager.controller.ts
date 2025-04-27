@@ -24,7 +24,7 @@ export class PasswordManagerController {
     async getAllPassword(req: Request, res: Response) {
         const passwords = await this.passwordManagerService.getAllPasswords();
         res.status(200).json(passwords);
-    };
+    }
 
     async getPasswordById(req: Request, res: Response) {
         const passwordId = req.params.id;
@@ -38,8 +38,12 @@ export class PasswordManagerController {
 
     async createPassword(req: Request, res: Response) {
         const passwordData = req.body;
-        if (!passwordData.title || !passwordData.password) {
+        if (!passwordData.domain || !passwordData.username || !passwordData.password) {
             res.status(400).json({message: "Name and password are required"});
+            return;
+        }
+        if (!passwordData.userId) {
+            res.status(400).json({message: "User ID is required"});
             return;
         }
         const newPassword = await this.passwordManagerService.createPassword(passwordData);
@@ -53,18 +57,11 @@ export class PasswordManagerController {
     async updatePassword(req: Request, res: Response) {
         const passwordId = req.params.id;
         const updatedData = req.body;
-        if (!updatedData.name && !updatedData.password) {
+        if (!updatedData.domain && !updatedData.password && !updatedData.username) {
             res.status(400).json({message: "Name or password is required"});
             return;
         }
-        const updateFields: { name?: string; password?: string } = {};
-        if (updatedData.name) {
-            updateFields.name = updatedData.name;
-        }
-        if (updatedData.password) {
-            updateFields.password = updatedData.password;
-        }
-        const updatedPassword = await this.passwordManagerService.updatePassword(passwordId, updateFields);
+        const updatedPassword = await this.passwordManagerService.updatePassword(passwordId, updatedData);
         if ("status" in updatedPassword) {
             res.status(updatedPassword.status).json({message: updatedPassword.message});
             return;

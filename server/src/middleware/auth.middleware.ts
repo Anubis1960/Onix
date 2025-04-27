@@ -1,8 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import * as jwt from "jsonwebtoken";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+import {JWT_SECRET} from "../utils/secrets.utils";
 
 /**
  * * Middleware to authenticate requests using JWT.

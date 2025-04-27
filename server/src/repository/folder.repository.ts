@@ -11,16 +11,26 @@ import datasource from "../config/datasource.config";
 export const FolderRepository = datasource.getRepository(Folder).extend({
     findAll() {
         return this.createQueryBuilder("folder_vault")
+            .select([
+                "folder_vault.id",
+                "folder_vault.folderName",
+                "folder_vault.parentId",
+            ])
             .getMany();
     },
 
     findById(id: string) {
         return this.createQueryBuilder("folder_vault")
+            .select([
+                "folder_vault.id",
+                "folder_vault.folderName",
+                "folder_vault.parentId",
+            ])
             .where("folder_vault.id = :id", {id})
             .getOne();
     },
 
-    createFolder(folderName: string, parentId: string, userId: string) {
+    createFolder(folderName: string, parentId: string | undefined, userId: string) {
         const folder = this.create({folderName, parentId, userId});
         return this.save(folder);
     },
@@ -43,12 +53,22 @@ export const FolderRepository = datasource.getRepository(Folder).extend({
 
     findByUserId(userId: string) {
         return this.createQueryBuilder("folder_vault")
+            .select([
+                "folder_vault.id",
+                "folder_vault.folderName",
+                "folder_vault.parentId",
+            ])
             .where("folder_vault.user_id = :userId", {userId})
             .getMany();
     },
 
     findByParentId(parentId: string) {
         return this.createQueryBuilder("folder_vault")
+            .select([
+                "folder_vault.id",
+                "folder_vault.folderName",
+                "folder_vault.parentId",
+            ])
             .where("folder_vault.parent_id = :parentId", {parentId})
             .getMany();
     },

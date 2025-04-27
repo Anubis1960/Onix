@@ -1,7 +1,7 @@
 import {UserRepository} from "../repository/user.repository";
 import logger from "../config/logger.config";
 import {UserDto} from "../dto/user.dto";
-import {hashPassword, comparePassword} from "../utils/crypt";
+import {hashPassword, comparePassword} from "../utils/crypt.utils";
 import {User} from "../entity/user.entity";
 
 /**
@@ -24,7 +24,7 @@ export class UserService {
             return [];
         }
         return users.map(user => {
-            return new UserDto(user.id, user.email);
+            return new UserDto(user.id);
         });
     }
 
@@ -35,7 +35,9 @@ export class UserService {
             return null
         }
         logger.info(user.toString());
-        return new UserDto(user.id, user.email);
+        return new UserDto(
+            user.id
+        );
     }
 
     async createUser(userData: any) {
@@ -46,8 +48,9 @@ export class UserService {
         }
         let hash: string = hashPassword(password);
         const newUser = await UserRepository.createUser(email, hash);
-        return new UserDto(newUser.id, newUser.email);
-
+        return new UserDto(
+            newUser.id
+        );
     }
 
     async updateUser(id: string, updatedData: { email?: string; password?: string }) {
@@ -63,7 +66,6 @@ export class UserService {
         await UserRepository.updateUser(id, partialUser);
         return new UserDto(
             user.id,
-            partialUser.email || user.email
         );
     }
 
@@ -73,7 +75,9 @@ export class UserService {
             return {status: 404, message: "User not found"};
         }
         await UserRepository.deleteUser(id);
-        return new UserDto(user.id, user.email);
+        return new UserDto(
+            user.id
+        );
     }
 
     async findByEmail(id: string) {
@@ -81,7 +85,9 @@ export class UserService {
         if (!user) {
             return null
         }
-        return new UserDto(user.id, user.email);
+        return new UserDto(
+            user.id
+        );
     }
 
     async findByEmailAndPassword(email: string, password: string) {
@@ -92,6 +98,8 @@ export class UserService {
         if (!comparePassword(password, user.password)) {
             return null
         }
-        return new UserDto(user.id, user.email);
+        return new UserDto(
+            user.id
+        );
     }
 }

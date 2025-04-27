@@ -8,8 +8,8 @@ import {FileMetadataDto} from "./file.metadata.dto";
 export class FileDto extends FileMetadataDto {
     private _folderId: string;
 
-    constructor(fileName: string, fileSize: number, fileType: string, folderId: string) {
-        super(fileName, fileSize, fileType);
+    constructor(id: string, fileName: string, fileSize: number, fileType: string, folderId: string) {
+        super(id, fileName, fileSize, fileType);
         this._folderId = folderId;
     }
 

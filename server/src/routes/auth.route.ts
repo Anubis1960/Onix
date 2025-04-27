@@ -2,6 +2,7 @@ import express from "express";
 import {AuthController} from "../controller/auth.controller";
 import {Strategy as GoogleStrategy} from "passport-google-oauth20";
 import passport from "passport";
+import {GOOGLE_CALLBACK_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET} from "../utils/secrets.utils";
 
 const router = express.Router();
 const authController = new AuthController();
@@ -17,9 +18,9 @@ router.post(
 );
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID || "",
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-    callbackURL: process.env.GOOGLE_CALLBACK_URL || ""
+    clientID: GOOGLE_CLIENT_ID,
+    clientSecret: GOOGLE_CLIENT_SECRET,
+    callbackURL: GOOGLE_CALLBACK_URL
 }, authController.googleCallback.bind(authController)));
 
 router.get(
@@ -28,7 +29,7 @@ router.get(
     (req, res) => {
         // Successful authentication, redirect home.
         console.log(req.user);
-        res.redirect(process.env.GOOGLE_CALLBACK_URL || "");
+        res.redirect(GOOGLE_CALLBACK_URL);
     }
 );
 

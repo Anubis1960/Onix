@@ -1,19 +1,21 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
+import path from "node:path";
+import fs from "node:fs";
 
 export class Users1744707094772 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(
-            `
-                CREATE TABLE IF NOT EXISTS "user"
-                (
-                    "user_id"  uuid         NOT NULL DEFAULT uuid_generate_v4(),
-                    "email"    varchar(100) NOT NULL,
-                    "password" varchar(511) NOT NULL,
-                    UNIQUE ("email"),
-                    PRIMARY KEY ("user_id")
-                )
-            `, undefined);
+        await queryRunner.query(`
+            CREATE TABLE IF NOT EXISTS "user"
+            (
+                "user_id"  UUID         NOT NULL DEFAULT uuid_generate_v4(),
+                "email"    VARCHAR(100) NOT NULL,
+                "password" VARCHAR(511) NOT NULL,
+
+                UNIQUE ("email"),
+                PRIMARY KEY ("user_id")
+            );
+        `, undefined);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

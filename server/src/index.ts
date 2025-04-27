@@ -1,6 +1,3 @@
-import dotenv from 'dotenv';
-
-dotenv.config();
 import express from "express";
 import {Express} from "express";
 import logger from "./config/logger.config";
@@ -14,16 +11,15 @@ import {folderRouter} from "./routes/folder.routes";
 import {authRouter} from "./routes/auth.route";
 import {passwordManagerRouter} from "./routes/password-manager.route";
 import passport from "passport";
+import cookieParser from "cookie-parser";
+import {SERVER_PORT} from "./utils/secrets.utils";
 
 const app: Express = express();
-
-const PORT: number = Number(process.env._PORT) || 3000;
-
-console.log(PORT);
 
 app.use(cors())
 app.use(passport.initialize());
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.use('/api/users', userRouter);
 app.use('/api/file', fileRouter);
 app.use('/api/file-shared', fileSharedRouter);
@@ -33,4 +29,4 @@ app.use('/auth', authRouter);
 app.use(errorHandler);
 
 
-app.listen(PORT, () => logger.info(`Server is running on port ${PORT}`));
+app.listen(SERVER_PORT, () => logger.info(`Server is running on port ${SERVER_PORT}`));

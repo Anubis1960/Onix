@@ -1,15 +1,13 @@
-import dotenv from 'dotenv';
 import {DataSource} from "typeorm";
-
-dotenv.config();
+import {DB_NAME, DB_PORT, DB_HOST, DB_PASSWORD, DB_USERNAME} from "../utils/secrets.utils";
 
 const datasource = new DataSource({
     type: "postgres",
-    host: process.env.DB_HOST || "localhost",
-    port: Number(process.env.DB_PORT) || 5432,
-    username: process.env.DB_USER || "postgres",
-    password: String(process.env.DB_PASSWORD) || "",
-    database: process.env.DB_NAME || "postgres",
+    host: DB_HOST,
+    port: DB_PORT,
+    username: DB_USERNAME,
+    password: DB_PASSWORD,
+    database: DB_NAME,
     synchronize: false,
     logging: true,
     migrations: [__dirname + '/../migrations/*.{ts,js}'],

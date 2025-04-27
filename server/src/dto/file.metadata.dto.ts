@@ -3,14 +3,24 @@
  * @description Data Transfer Object for file metadata.
  */
 export abstract class FileMetadataDto {
+    private _id: string;
     private _fileName: string;
     private _fileSize: number;
     private _fileType: string;
 
-    protected constructor(fileName: string, fileSize: number, fileType: string) {
+    protected constructor(id: string, fileName: string, fileSize: number, fileType: string) {
+        this._id = id;
         this._fileName = fileName;
         this._fileSize = fileSize;
         this._fileType = fileType;
+    }
+
+    get id(): string {
+        return this._id;
+    }
+
+    set id(value: string) {
+        this._id = value;
     }
 
     get fileName(): string {

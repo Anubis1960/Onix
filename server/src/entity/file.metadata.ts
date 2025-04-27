@@ -17,7 +17,7 @@ export abstract class FileMetadata {
     @Column({
         name: "file_name",
         type: "varchar",
-        length: 255,
+        length: 100,
     })
     fileName: string;
 

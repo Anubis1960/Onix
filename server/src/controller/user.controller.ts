@@ -1,6 +1,7 @@
 import {UserService} from "../service/user.service";
 import {Request, Response} from "express";
 import logger from "../config/logger.config";
+import {FolderService} from "../service/folder.service";
 
 /**
  * UserController handles user-related requests.
@@ -15,9 +16,11 @@ import logger from "../config/logger.config";
  */
 export class UserController {
     private userService: UserService;
+    private folderService: FolderService;
 
     constructor() {
         this.userService = new UserService();
+        this.folderService = new FolderService();
     }
 
     async getAllUsers(req: Request, res: Response) {
@@ -47,6 +50,15 @@ export class UserController {
             res.status(newUser.status).json({message: newUser.message});
             return;
         }
+        const folder = await this.folderService.createFolder({
+            name: "/",
+            parentId: undefined,
+            userId: newUser.id
+        });
+        if ("status" in folder) {
+            res.status(folder.status).json({message: folder.message});
+            return;
+        }
         res.status(201).json(newUser);
     }
 
@@ -57,14 +69,7 @@ export class UserController {
             res.status(400).json({message: "Email or password is required"});
             return;
         }
-        const updateFields: { email?: string; password?: string } = {};
-        if (updatedData.email) {
-            updateFields.email = updatedData.email;
-        }
-        if (updatedData.password) {
-            updateFields.password = updatedData.password;
-        }
-        const updatedUser = await this.userService.updateUser(userId, updateFields);
+        const updatedUser = await this.userService.updateUser(userId, updatedData);
         if ("status" in updatedUser) {
             res.status(updatedUser.status).json({message: updatedUser.message});
             return;
@@ -83,6 +88,7 @@ export class UserController {
             res.status(deletedUser.status).json({message: deletedUser.message});
             return;
         }
+        // TODO: Delete all folders and files associated with the user
         res.status(200).json(deletedUser);
     }
 }

@@ -10,17 +10,26 @@ import {User} from "../entity/user.entity";
 export const UserRepository = dataSource.getRepository(User).extend({
     findAll() {
         return this.createQueryBuilder("user")
+            .select([
+                "user.id",
+            ])
             .getMany();
     },
 
     findByEmail(email: string) {
         return this.createQueryBuilder("user")
+            .select([
+                "user.id",
+            ])
             .where("user.email = :email", {email})
             .getOne();
     },
 
     findById(id: string) {
         return this.createQueryBuilder("user")
+            .select([
+                "user.id",
+            ])
             .where("user.id = :id", {id})
             .getOne();
     },

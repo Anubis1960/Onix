@@ -10,17 +10,31 @@ import {File} from "../entity/file.entity";
 export const FileRepository = datasource.getRepository(File).extend({
     findAll() {
         return this.createQueryBuilder("file_vault")
+            .select([
+                "file_vault.id",
+                "file_vault.fileName",
+                "file_vault.fileSize",
+                "file_vault.fileType",
+                "file_vault.folderId",
+            ])
             .getMany();
     },
 
     findById(id: string) {
         return this.createQueryBuilder("file_vault")
+            .select([
+                "file_vault.id",
+                "file_vault.fileName",
+                "file_vault.fileSize",
+                "file_vault.fileType",
+                "file_vault.folderId",
+            ])
             .where("file_vault.id = :id", {id})
             .getOne();
     },
 
-    createFile(fileName: string, storagePath: string, fileSize: number, fileType: string, folderId: string) {
-        const file = this.create({fileName, storagePath, fileSize, fileType, folderId});
+    createFile(id: string, fileName: string, fileSize: number, fileType: string, storagePath: string, folderId: string) {
+        const file = this.create({id, fileName, storagePath, fileSize, fileType, folderId});
         return this.save(file);
     },
 
@@ -42,6 +56,13 @@ export const FileRepository = datasource.getRepository(File).extend({
 
     findByFolderId(folderId: string) {
         return this.createQueryBuilder("file_vault")
+            .select([
+                "file_vault.id",
+                "file_vault.fileName",
+                "file_vault.fileSize",
+                "file_vault.fileType",
+                "file_vault.folderId",
+            ])
             .where("file_vault.folder_id = :folderId", {folderId})
             .getMany();
     },

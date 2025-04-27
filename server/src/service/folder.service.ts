@@ -3,6 +3,7 @@ import {Folder} from "../entity/folder.entity";
 import {FolderRepository} from "../repository/folder.repository";
 import {FolderDto} from "../dto/folder.dto";
 import supabase from "../config/supabase.config";
+import {UserRepository} from "../repository/user.repository";
 
 /**
  * @class FolderService
@@ -22,7 +23,11 @@ export class FolderService {
             return [];
         }
         return folders.map(folder => {
-            return new FolderDto(folder.folderName, folder.parentId, folder.userId);
+            return new FolderDto(
+                folder.id,
+                folder.folderName,
+                folder.parentId,
+            );
         });
     }
 
@@ -33,42 +38,59 @@ export class FolderService {
             return null
         }
         logger.info(folder.toString());
-        return new FolderDto(folder.folderName, folder.parentId, folder.userId);
+        return new FolderDto(
+            folder.id,
+            folder.folderName,
+            folder.parentId
+        );
     }
 
     async createFolder(folderData: any) {
         const {name, parentId, userId} = folderData;
-        if (!name || !userId) {
-            return {status: 400, message: "Name and userId are required"};
+        const parentFolder = await FolderRepository.findById(parentId);
+        if (!parentFolder) {
+            return {status: 404, message: "Parent folder not found"};
+        }
+        const user = await UserRepository.findById(userId);
+        if (!user) {
+            return {status: 404, message: "User not found"};
         }
         const folder = await FolderRepository.createFolder(name, parentId, userId);
         if (!folder) {
             return {status: 500, message: "Folder creation failed"};
         }
-        return new FolderDto(folder.folderName, folder.parentId, folder.userId);
+        return new FolderDto(
+            folder.id,
+            folder.folderName,
+            folder.parentId,
+        );
     }
 
-    async updateFolder(id: string, updatedData: { name?: string }) {
+    async updateFolder(id: string, updatedData: { name?: string, parentId?: string }) {
         const folder = await FolderRepository.findById(id);
         if (!folder) {
             return {status: 404, message: "Folder not found"};
         }
         let partialFolder: Partial<Folder> = {
-            folderName: updatedData.name
+            folderName: updatedData.name,
+            parentId: updatedData.parentId,
         }
         await FolderRepository.updateFolder(id, partialFolder);
         return new FolderDto(
+            folder.id,
             partialFolder.folderName || folder.folderName,
-            folder.parentId,
-            folder.userId
+            partialFolder.parentId || folder.parentId,
         );
     }
 
     async deleteFolder(id: string) {
-        const folder = await FolderRepository.deleteFolder(id);
-        logger.info("Folder deleted:", folder);
+        const folder = await FolderRepository.findById(id);
         if (!folder) {
             return {status: 404, message: "Folder not found"};
+        }
+        const deletedFolder = await FolderRepository.deleteFolder(id);
+        if (!deletedFolder) {
+            return {status: 500, message: "Failed to delete folder"};
         }
         return {status: 200, message: "Folder deleted successfully"};
     }
@@ -80,7 +102,11 @@ export class FolderService {
             return []
         }
         return folders.map(folder => {
-            return new FolderDto(folder.folderName, folder.parentId, folder.userId);
+            return new FolderDto(
+                folder.id,
+                folder.folderName,
+                folder.parentId,
+            );
         });
     }
 
@@ -90,8 +116,13 @@ export class FolderService {
             logger.info("No folders found for parent ID:", parentId)
             return []
         }
+        logger.info(folders);
         return folders.map(folder => {
-            return new FolderDto(folder.id, folder.folderName, folder.parentId);
+            return new FolderDto(
+                folder.id,
+                folder.folderName,
+                folder.parentId
+            );
         });
     }
 }

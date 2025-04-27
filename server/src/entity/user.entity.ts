@@ -1,6 +1,7 @@
 import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, OneToMany} from "typeorm";
 import {File} from "./file.entity";
 import {Folder} from "./folder.entity";
+import {PasswordManager} from "./password-manager.entity";
 
 /**
  * @class User
@@ -34,6 +35,9 @@ export class User {
 
     @OneToMany((type) => Folder, (folder) => folder.user)
     folders: Folder[];
+
+    @OneToMany((type) => PasswordManager, (passwordManager) => passwordManager.user)
+    passwordManagers: PasswordManager[];
 
     toString() {
         return `User { user_id: ${this.id}, email: ${this.email}`;

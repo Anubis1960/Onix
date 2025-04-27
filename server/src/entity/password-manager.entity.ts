@@ -1,4 +1,5 @@
-import {Column, Entity, OneToMany, PrimaryColumn} from "typeorm";
+import {Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn} from "typeorm";
+import {User} from "./user.entity";
 
 /**
  * @class PasswordManager
@@ -8,7 +9,7 @@ import {Column, Entity, OneToMany, PrimaryColumn} from "typeorm";
 @Entity("password_manager", {schema: "public"})
 export class PasswordManager {
     @PrimaryColumn({
-        name: "pass_id",
+        name: "password_id",
         type: "uuid",
         generated: "uuid",
         default: () => "uuid_generate_v4()",
@@ -21,22 +22,33 @@ export class PasswordManager {
         nullable: false,
         primary: false,
     })
-    @OneToMany(type => PasswordManager, password => password.userId)
     userId: string;
 
     @Column({
-        name: "name",
+        name: "domain",
         type: "varchar",
         length: 255,
         nullable: false,
     })
-    name: string;
+    domain: string;
+
+    @Column({
+        name: "username",
+        type: "varchar",
+        length: 255,
+        nullable: false,
+    })
+    username: string;
 
     @Column({
         name: "password",
         type: "varchar",
-        length: 511,
+        length: 255,
         nullable: false,
     })
     password: string;
+
+    @ManyToOne((type) => User, (user) => user.passwordManagers)
+    @JoinColumn({name: "user_id"})
+    user: User;
 }

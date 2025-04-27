@@ -2,6 +2,7 @@ import logger from "../config/logger.config";
 import {SharedFileRepository} from "../repository/shared-file.repository";
 import {SharedFileDto} from "../dto/shared-file.dto";
 import supabase from "../config/supabase.config";
+import {v4 as uuidv4} from "uuid";
 
 /**
  * @class SharedFileService
@@ -20,7 +21,15 @@ export class SharedFileService {
             return [];
         }
         return files.map(file => {
-            return new SharedFileDto(file.fileName, file.fileSize, file.fileType, file.downloadsRemaining, file.timeToLive, file.createdAt);
+            return new SharedFileDto(
+                file.id,
+                file.fileName,
+                file.fileSize,
+                file.fileType,
+                file.downloadsRemaining,
+                file.timeToLive,
+                file.createdAt
+            );
         });
     }
 
@@ -31,16 +40,34 @@ export class SharedFileService {
             return null
         }
         logger.info(file.toString());
-        return new SharedFileDto(file.fileName, file.fileSize, file.fileType, file.downloadsRemaining, file.timeToLive, file.createdAt);
+        return new SharedFileDto(
+            file.id,
+            file.fileName,
+            file.fileSize,
+            file.fileType,
+            file.downloadsRemaining,
+            file.timeToLive,
+            file.createdAt
+        );
     }
 
     async createFile(fileData: any) {
-        const {name, path, downloadsRemaining, timeToLive, size} = fileData;
-        const newFile = await SharedFileRepository.createFileShared(name, size, downloadsRemaining, timeToLive, path);
+        const {name, size, type, downloadsRemaining, timeToLive, roomId} = fileData;
+        const id = uuidv4();
+        const storagePath = `${roomId}/${id}/${name}`;
+        const newFile = await SharedFileRepository.createFileShared(id, name, size, type, storagePath, downloadsRemaining, timeToLive);
         if (!newFile) {
             return {status: 409, message: "File already exists"};
         }
-        return new SharedFileDto(newFile.fileName, newFile.fileSize, newFile.fileType, newFile.downloadsRemaining, newFile.timeToLive, newFile.createdAt);
+        return new SharedFileDto(
+            newFile.id,
+            newFile.fileName,
+            newFile.fileSize,
+            newFile.fileType,
+            newFile.downloadsRemaining,
+            newFile.timeToLive,
+            newFile.createdAt
+        );
     }
 
     async updateFile(id: string, updatedData: {
@@ -65,7 +92,15 @@ export class SharedFileService {
         if (!updatedFile) {
             return {status: 404, message: "File not found"};
         }
-        return new SharedFileDto(updatedFile.fileName, updatedFile.fileSize, updatedFile.fileType, updatedFile.downloadsRemaining, updatedFile.timeToLive, updatedFile.createdAt);
+        return new SharedFileDto(
+            updatedFile.id,
+            updatedFile.fileName,
+            updatedFile.fileSize,
+            updatedFile.fileType,
+            updatedFile.downloadsRemaining,
+            updatedFile.timeToLive,
+            updatedFile.createdAt
+        );
     }
 
     async deleteFile(id: string) {
@@ -74,6 +109,14 @@ export class SharedFileService {
             return {status: 404, message: "File not found"};
         }
         await SharedFileRepository.deleteFileShared(id);
-        return new SharedFileDto(file.fileName, file.fileSize, file.fileType, file.downloadsRemaining, file.timeToLive, file.createdAt);
+        return new SharedFileDto(
+            file.id,
+            file.fileName,
+            file.fileSize,
+            file.fileType,
+            file.downloadsRemaining,
+            file.timeToLive,
+            file.createdAt
+        );
     }
 }

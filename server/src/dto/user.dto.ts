@@ -4,11 +4,9 @@
  */
 export class UserDto {
     private _id: string;
-    private _email: string;
 
-    constructor(id: string, email: string) {
+    constructor(id: string) {
         this._id = id;
-        this._email = email;
     }
 
     get id(): string {
@@ -17,17 +15,5 @@ export class UserDto {
 
     set id(value: string) {
         this._id = value;
-    }
-
-    get email(): string {
-        return this._email;
-    }
-
-    set email(value: string) {
-        this._email = value;
-    }
-
-    toString() {
-        return `UserDAO { id: ${this._id}, email: ${this._email} }`;
     }
 }

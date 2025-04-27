@@ -10,17 +10,35 @@ import {SharedFile} from "../entity/shared-file.entity";
 export const SharedFileRepository = datasource.getRepository(SharedFile).extend({
     findAll() {
         return this.createQueryBuilder("file_shared")
+            .select([
+                "file_shared.id",
+                "file_shared.fileName",
+                "file_shared.fileSize",
+                "file_shared.fileType",
+                "file_shared.downloadsRemaining",
+                "file_shared.timeToLive",
+                "file_shared.createdAt",
+            ])
             .getMany();
     },
 
     findById(id: string) {
         return this.createQueryBuilder("file_shared")
+            .select([
+                "file_shared.id",
+                "file_shared.fileName",
+                "file_shared.fileSize",
+                "file_shared.fileType",
+                "file_shared.downloadsRemaining",
+                "file_shared.timeToLive",
+                "file_shared.createdAt",
+            ])
             .where("file_shared.id = :id", {id})
             .getOne();
     },
 
-    createFileShared(fileName: string, fileSize: number, downloadsRemaining: number, timeToLive: number, storagePath: string) {
-        const fileShared = this.create({fileName, fileSize, downloadsRemaining, timeToLive, storagePath});
+    createFileShared(id: string, fileName: string, fileSize: number, fileType: string, storagePath: string, downloadsRemaining: number, timeToLive: number) {
+        const fileShared = this.create({id, fileName, fileSize, fileType, downloadsRemaining, timeToLive, storagePath});
         return this.save(fileShared);
     },
 

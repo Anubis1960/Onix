@@ -10,8 +10,8 @@ export class SharedFileDto extends FileMetadataDto {
     private _timeToLive: number;
     private _createdAt: Date;
 
-    constructor(fileName: string, fileSize: number, fileType: string, downloadsRemaining: number, timeToLive: number, createdAt: Date) {
-        super(fileName, fileSize, fileType);
+    constructor(id: string, fileName: string, fileSize: number, fileType: string, downloadsRemaining: number, timeToLive: number, createdAt: Date) {
+        super(id, fileName, fileSize, fileType);
         this._downloadsRemaining = downloadsRemaining;
         this._timeToLive = timeToLive;
         this._createdAt = createdAt;

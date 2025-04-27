@@ -19,9 +19,12 @@ export class PasswordManagerService {
             logger.info("No passwords found");
             return [];
         }
-
         return passwords.map(password => {
-            return new PasswordManagerDto(password.name, password.password);
+            return new PasswordManagerDto(
+                password.domain,
+                password.username,
+                password.password
+            );
         });
     }
 
@@ -31,36 +34,49 @@ export class PasswordManagerService {
             logger.info("Password not found for ID:", id)
             return null
         }
-        return new PasswordManagerDto(password.name, password.password);
+        return new PasswordManagerDto(
+            password.domain,
+            password.username,
+            password.password
+        );
     }
 
     async createPassword(passwordData: any) {
-        const {name, password, userId} = passwordData;
-        const existingPassword = await PasswordManagerRepository.findByUserId(userId);
-        if (existingPassword) {
+        const {domain, username, password, userId} = passwordData;
+        const newPassword = await PasswordManagerRepository.createPasswordManager(domain, username, password, userId);
+        if (!newPassword) {
             return {status: 409, message: "Password already exists"};
         }
-        const newPassword = await PasswordManagerRepository.createPasswordManager(name, password, userId);
-        return new PasswordManagerDto(newPassword.name, newPassword.password);
+        return new PasswordManagerDto(
+            newPassword.domain,
+            newPassword.username,
+            newPassword.password
+        );
     }
 
-    async updatePassword(id: string, updatedData: { name?: string; password?: string }) {
+    async updatePassword(id: string, updatedData: { domain?: string, username?: string; password?: string }) {
         const password = await PasswordManagerRepository.findById(id);
         if (!password) {
             return {status: 404, message: "Password not found"};
         }
         let partialPassword: Partial<PasswordManagerDto> = {
-            name: updatedData.name,
+            domain: updatedData.domain,
+            username: updatedData.username,
             password: updatedData.password
         };
         await PasswordManagerRepository.updatePasswordManager(id, partialPassword);
         return new PasswordManagerDto(
-            partialPassword.name || password.name,
+            partialPassword.domain || password.domain,
+            partialPassword.username || password.username,
             partialPassword.password || password.password
         );
     }
 
     async deletePassword(id: string) {
+        const password = await PasswordManagerRepository.findById(id);
+        if (!password) {
+            return {status: 404, message: "Password not found"};
+        }
         const deletedPassword = await PasswordManagerRepository.deletePasswordManager(id);
         logger.info("Password deleted:", deletedPassword);
         if (!deletedPassword) {
@@ -76,7 +92,11 @@ export class PasswordManagerService {
             return []
         }
         return passwords.map(password => {
-            return new PasswordManagerDto(password.name, password.password);
+            return new PasswordManagerDto(
+                password.domain,
+                password.username,
+                password.password
+            );
         });
     }
 }

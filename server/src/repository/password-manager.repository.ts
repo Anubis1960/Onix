@@ -10,17 +10,27 @@ import {PasswordManager} from "../entity/password-manager.entity";
 export const PasswordManagerRepository = datasource.getRepository(PasswordManager).extend({
     findAll() {
         return this.createQueryBuilder("password_manager")
+            .select([
+                "password_manager.domain",
+                "password_manager.username",
+                "password_manager.password",
+            ])
             .getMany();
     },
 
     findById(id: string) {
         return this.createQueryBuilder("password_manager")
+            .select([
+                "password_manager.domain",
+                "password_manager.username",
+                "password_manager.password",
+            ])
             .where("password_manager.id = :id", {id})
             .getOne();
     },
 
-    createPasswordManager(name: string, password: string, userId: string) {
-        const passwordManager = this.create({name, password, userId});
+    createPasswordManager(domain: string, username: string, password: string, userId: string) {
+        const passwordManager = this.create({domain, username, password, userId});
         return this.save(passwordManager);
     },
 
@@ -42,6 +52,11 @@ export const PasswordManagerRepository = datasource.getRepository(PasswordManage
 
     findByUserId(userId: string) {
         return this.createQueryBuilder("password_manager")
+            .select([
+                "password_manager.domain",
+                "password_manager.username",
+                "password_manager.password",
+            ])
             .where("password_manager.user_id = :userId", {userId})
             .getMany();
     },
