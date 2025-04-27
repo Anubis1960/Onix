@@ -2,7 +2,6 @@ import logger from "../config/logger.config";
 import {Folder} from "../entity/folder.entity";
 import {FolderRepository} from "../repository/folder.repository";
 import {FolderDto} from "../dto/folder.dto";
-import supabase from "../config/supabase.config";
 import {UserRepository} from "../repository/user.repository";
 
 /**
@@ -47,9 +46,11 @@ export class FolderService {
 
     async createFolder(folderData: any) {
         const {name, parentId, userId} = folderData;
-        const parentFolder = await FolderRepository.findById(parentId);
-        if (!parentFolder) {
-            return {status: 404, message: "Parent folder not found"};
+        if (parentId) {
+            const parentFolder = await FolderRepository.findById(parentId);
+            if (!parentFolder) {
+                return {status: 404, message: "Parent folder not found"};
+            }
         }
         const user = await UserRepository.findById(userId);
         if (!user) {

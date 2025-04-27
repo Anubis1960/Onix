@@ -1,5 +1,4 @@
 import {Folder} from "../entity/folder.entity";
-import logger from "../config/logger.config";
 import datasource from "../config/datasource.config";
 
 /**

@@ -1,7 +1,6 @@
 import logger from "../config/logger.config";
 import {SharedFileRepository} from "../repository/shared-file.repository";
 import {SharedFileDto} from "../dto/shared-file.dto";
-import supabase from "../config/supabase.config";
 import {v4 as uuidv4} from "uuid";
 import {StorageFileDto} from "../dto/storage-file.dto";
 

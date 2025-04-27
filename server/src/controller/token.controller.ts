@@ -1,6 +1,10 @@
 import {Request, Response} from "express";
 import {generateAccessToken, generateRefreshToken, verifyToken} from "../utils/jwt.utils";
 
+/**
+ * @class TokenController
+ * @description This class handles the generation and verification of JWT tokens.
+ */
 export class TokenController {
     async refreshTokens(req: Request, res: Response) {
         if (!req.cookies.refreshToken) {

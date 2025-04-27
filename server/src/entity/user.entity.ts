@@ -1,5 +1,4 @@
-import {Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, OneToMany} from "typeorm";
-import {File} from "./file.entity";
+import {Entity, Column, PrimaryColumn, OneToMany} from "typeorm";
 import {Folder} from "./folder.entity";
 import {PasswordManager} from "./password-manager.entity";
 

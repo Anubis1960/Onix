@@ -1,6 +1,4 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
-import * as path from "node:path";
-import * as fs from "node:fs";
 
 
 export class FileVault1745609358612 implements MigrationInterface {

@@ -100,5 +100,6 @@ export class SharedFileController {
     }
 
     async downloadFile(req: Request, res: Response) {
+        //TODO Implement download file
     }
 }

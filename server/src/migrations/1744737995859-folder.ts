@@ -1,6 +1,4 @@
 import {MigrationInterface, QueryRunner} from "typeorm";
-import path from "node:path";
-import fs from "node:fs";
 
 export class Folder1744737995859 implements MigrationInterface {
 

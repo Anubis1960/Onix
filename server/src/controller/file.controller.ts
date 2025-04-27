@@ -3,7 +3,6 @@ import logger from "../config/logger.config";
 import {FileService} from "../service/file.service";
 import {SupabaseService} from "../service/supabase.service";
 import fs from "fs";
-import {FolderService} from "../service/folder.service";
 import {FileDto} from "../dto/file.dto";
 
 /**

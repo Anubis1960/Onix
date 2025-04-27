@@ -1,5 +1,4 @@
 import {Request, Response} from 'express';
-import logger from '../config/logger.config';
 import {UserService} from '../service/user.service';
 import {generateAccessToken, generateRefreshToken} from "../utils/jwt.utils";
 import {FolderService} from "../service/folder.service";
