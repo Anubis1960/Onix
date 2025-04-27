@@ -1,9 +1,9 @@
 import logger from "../config/logger.config";
 import {FileRepository} from "../repository/file.repository";
 import {FileDto} from "../dto/file.dto";
-import supabase from "../config/supabase.config";
+import {File} from "../entity/file.entity";
 import {v4 as uuidv4} from "uuid";
-import {FileMetadata} from "../entity/file.metadata";
+import {StorageFileDto} from "../dto/storage-file.dto";
 
 /**
  * @class FileService
@@ -73,18 +73,23 @@ export class FileService {
         if (!file) {
             return {status: 404, message: "File not found"};
         }
-        let partialFile: Partial<FileDto> = {
+
+        let partialFile: Partial<File> = {
             fileName: updatedData.name,
             folderId: updatedData.folderId,
         }
+        if (updatedData) {
+            partialFile.storagePath = file.storagePath.split("/").slice(0, -1).join("/") + "/" + updatedData.name;
+        }
+
         await FileRepository.updateFile(id, partialFile);
-        return new FileDto(
+        return new StorageFileDto<FileDto>(new FileDto(
             file.id,
             partialFile.fileName || file.fileName,
             file.fileSize,
             file.fileType,
-            file.folderId
-        );
+            partialFile.folderId || file.folderId
+        ), partialFile.storagePath || file.storagePath);
     }
 
     async deleteFile(id: string) {
@@ -93,13 +98,13 @@ export class FileService {
             return {status: 404, message: "File not found"};
         }
         await FileRepository.deleteFile(id);
-        return new FileDto(
+        return new StorageFileDto<FileDto>(new FileDto(
             file.id,
             file.fileName,
             file.fileSize,
             file.fileType,
             file.folderId
-        );
+        ), file.storagePath);
     }
 
     async getFilesByFolderId(folderId: string) {

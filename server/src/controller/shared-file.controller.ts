@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import logger from "../config/logger.config";
 import {SharedFileService} from "../service/shared-file.service";
 import {v4 as uuidv4} from "uuid";
+import {SupabaseService} from "../service/supabase.service";
 
 /**
  * SharedFileController handles shared file-related requests.
@@ -18,9 +19,11 @@ import {v4 as uuidv4} from "uuid";
  */
 export class SharedFileController {
     private sharedFileService: SharedFileService;
+    private supabaseService: SupabaseService;
 
     constructor() {
         this.sharedFileService = new SharedFileService();
+        this.supabaseService = new SupabaseService();
     }
 
     async getAllFiles(req: Request, res: Response) {
@@ -63,6 +66,9 @@ export class SharedFileController {
             res.status(newFile.status).json({message: newFile.message});
             return;
         }
+        const storagePath = `${roomId}/${newFile.id}/${fileData.name}`;
+        const uploadResult = await this.supabaseService.uploadFile("shared", storagePath, req.file.buffer);
+        logger.info(uploadResult);
         res.status(201).json(newFile);
     }
 
@@ -88,6 +94,8 @@ export class SharedFileController {
             res.status(deletedFile.status).json({message: deletedFile.message});
             return;
         }
+        const deleteResult = await this.supabaseService.deleteFile("shared", deletedFile.storagePath);
+        logger.info(deleteResult);
         res.status(200).json(deletedFile);
     }
 

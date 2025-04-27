@@ -9,8 +9,8 @@ import supabase from "../config/supabase.config";
  */
 
 export class SupabaseService {
-    async uploadFile(filePath: string, file: any) {
-        const {data, error} = await supabase.storage.from("vault").upload(filePath, file, {
+    async uploadFile(bucket: string, filePath: string, file: any) {
+        const {data, error} = await supabase.storage.from(bucket).upload(filePath, file, {
             upsert: true,
         });
         if (error) {
@@ -19,18 +19,26 @@ export class SupabaseService {
         return data;
     }
 
-    async getFile(filePath: string) {
-        const {data, error} = await supabase.storage.from("vault").download(filePath);
+    async getFile(bucket: string, filePath: string) {
+        const {data, error} = await supabase.storage.from(bucket).download(filePath);
         if (error) {
             throw new Error(`Error retrieving file: ${error.message}`);
         }
         return data;
     }
 
-    async deleteFile(filePath: string) {
-        const {data, error} = await supabase.storage.from("vault").remove([filePath]);
+    async deleteFile(bucket: string, filePath: string) {
+        const {data, error} = await supabase.storage.from(bucket).remove([filePath]);
         if (error) {
             throw new Error(`Error deleting file: ${error.message}`);
+        }
+        return data;
+    }
+
+    async moveFile(bucket: string, oldFilePath: string, newFilePath: string) {
+        const {data, error} = await supabase.storage.from(bucket).move(oldFilePath, newFilePath);
+        if (error) {
+            throw new Error(`Error updating file: ${error.message}`);
         }
         return data;
     }

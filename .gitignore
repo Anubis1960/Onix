@@ -157,6 +157,7 @@ node_modules
 /server/.env.local
 /server/tsconfig.tsbuildinfo
 /server/logs
+/server/uploads
 /.pnp
 .pnp.js
 

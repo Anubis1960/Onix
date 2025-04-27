@@ -28,6 +28,7 @@ export const FileRepository = datasource.getRepository(File).extend({
                 "file_vault.fileSize",
                 "file_vault.fileType",
                 "file_vault.folderId",
+                "file_vault.storagePath",
             ])
             .where("file_vault.id = :id", {id})
             .getOne();

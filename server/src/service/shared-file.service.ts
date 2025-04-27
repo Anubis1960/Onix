@@ -3,6 +3,7 @@ import {SharedFileRepository} from "../repository/shared-file.repository";
 import {SharedFileDto} from "../dto/shared-file.dto";
 import supabase from "../config/supabase.config";
 import {v4 as uuidv4} from "uuid";
+import {StorageFileDto} from "../dto/storage-file.dto";
 
 /**
  * @class SharedFileService
@@ -109,14 +110,17 @@ export class SharedFileService {
             return {status: 404, message: "File not found"};
         }
         await SharedFileRepository.deleteFileShared(id);
-        return new SharedFileDto(
-            file.id,
-            file.fileName,
-            file.fileSize,
-            file.fileType,
-            file.downloadsRemaining,
-            file.timeToLive,
-            file.createdAt
+        return new StorageFileDto<SharedFileDto>(
+            new SharedFileDto(
+                file.id,
+                file.fileName,
+                file.fileSize,
+                file.fileType,
+                file.downloadsRemaining,
+                file.timeToLive,
+                file.createdAt
+            ),
+            file.storagePath
         );
     }
 }

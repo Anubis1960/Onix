@@ -1,6 +1,10 @@
 import {Request, Response} from "express";
 import logger from "../config/logger.config";
 import {FileService} from "../service/file.service";
+import {SupabaseService} from "../service/supabase.service";
+import fs from "fs";
+import {FolderService} from "../service/folder.service";
+import {FileDto} from "../dto/file.dto";
 
 /**
  * FileController handles file-related requests.
@@ -18,9 +22,11 @@ import {FileService} from "../service/file.service";
  **/
 export class FileController {
     private fileService: FileService;
+    private supabaseService: SupabaseService;
 
     constructor() {
         this.fileService = new FileService();
+        this.supabaseService = new SupabaseService();
     }
 
     async getAllFiles(req: Request, res: Response) {
@@ -43,7 +49,7 @@ export class FileController {
             res.status(400).json({message: "File is required"});
             return;
         }
-        logger.info(req.file);
+
         const fileData = {
             name: req.file.originalname,
             size: req.file.size,
@@ -52,17 +58,31 @@ export class FileController {
             userId: req.body.userId,
         };
         logger.info(fileData);
+
         if (!fileData.name || !fileData.type || !fileData.folderId || !fileData.userId) {
             res.status(400).json({message: "Name, size, type, folderId and userId are required"});
             return;
         }
         const newFile = await this.fileService.createFile(fileData);
+
         if ("status" in newFile) {
             res.status(newFile.status).json({message: newFile.message});
             return;
         }
+
         const storagePath = `${fileData.userId}/${newFile.id}/${fileData.name}`;
-        // TODO: Upload the file to the storage
+        const uploadResult = await this.supabaseService.uploadFile("vault", storagePath, req.file.buffer);
+        logger.info(uploadResult);
+
+        // remove the file from the local storage
+        const filePath = req.file.path;
+        fs.unlink(filePath, (err: any) => {
+            if (err) {
+                logger.error("Error deleting file:", err);
+            } else {
+                logger.info("File deleted successfully");
+            }
+        });
         res.status(201).json(newFile);
     }
 
@@ -74,14 +94,16 @@ export class FileController {
             return;
         }
         const updatedFile = await this.fileService.updateFile(fileId, updatedData);
-        if (updatedData.name) {
-            // TODO: Update the file name in the storage
-        }
         if ("status" in updatedFile) {
             res.status(updatedFile.status).json({message: updatedFile.message});
             return;
         }
-        res.status(200).json(updatedFile);
+        const fileDto: FileDto = updatedFile.fileDto;
+        const oldStoragePath = updatedFile.storagePath;
+        const newStoragePath = updatedFile.storagePath.split("/").slice(0, -1).join("/") + "/" + fileDto.fileName;
+        const uploadResult = await this.supabaseService.moveFile("vault", oldStoragePath, newStoragePath);
+        logger.info(uploadResult);
+        res.status(200).json(updatedFile.fileDto);
     }
 
     async deleteFile(req: Request, res: Response) {
@@ -91,8 +113,9 @@ export class FileController {
             res.status(deletedFile.status).json({message: deletedFile.message});
             return;
         }
-        // TODO: Delete the file from the storage
-        res.status(200).json(deletedFile);
+        const deleteResult = await this.supabaseService.deleteFile("vault", deletedFile.storagePath);
+        logger.info(deleteResult);
+        res.status(200).json(deletedFile.fileDto);
     }
 
     async getFilesByFolderId(req: Request, res: Response) {
