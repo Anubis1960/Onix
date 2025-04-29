@@ -10,6 +10,13 @@ import {FileMetadata} from "./file.metadata";
 @Entity("shared_file", {schema: "public"})
 export class SharedFile extends FileMetadata {
     @Column({
+        name: "room_id",
+        type: "uuid",
+        nullable: false,
+    })
+    roomId: string;
+
+    @Column({
         name: "downloads_remaining",
         type: "int2",
         nullable: false

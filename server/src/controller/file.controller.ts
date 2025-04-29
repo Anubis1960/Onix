@@ -56,7 +56,6 @@ export class FileController {
             folderId: req.body.folderId,
             userId: req.body.userId,
         };
-        logger.info(fileData);
 
         if (!fileData.name || !fileData.type || !fileData.folderId || !fileData.userId) {
             res.status(400).json({message: "Name, size, type, folderId and userId are required"});
@@ -69,11 +68,13 @@ export class FileController {
             return;
         }
 
-        const storagePath = `${fileData.userId}/${newFile.id}/${fileData.name}`;
-        const uploadResult = await this.supabaseService.uploadFile("vault", storagePath, req.file.buffer);
-        logger.info(uploadResult);
+        const file = req.file;
 
-        // remove the file from the local storage
+        let buffer = fs.readFileSync(file.path);
+
+        const storagePath = `${fileData.userId}/${newFile.id}/${fileData.name}`;
+        await this.supabaseService.uploadFile("vault", storagePath, buffer, fileData.type);
+
         const filePath = req.file.path;
         fs.unlink(filePath, (err: any) => {
             if (err) {
@@ -124,6 +125,25 @@ export class FileController {
     }
 
     async downloadFile(req: Request, res: Response) {
-        // TODO: Implement file download logic
+        const fileId = req.params.id;
+        const file = await this.fileService.getMetadataById(fileId);
+        if (file.storagePath === undefined || file.fileSize === undefined || file.fileType === undefined) {
+            res.status(404).json({message: "File not found"});
+            return;
+        }
+
+        const dfile = await this.supabaseService.getFile("vault", file.storagePath);
+        if (dfile === null) {
+            res.status(404).json({message: "File not found"});
+            return;
+        }
+
+        const arrayBuffer = await dfile.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        res.setHeader("Content-Disposition", `attachment; filename=${file.fileName}`);
+        res.setHeader("Content-Type", file.fileType);
+        res.setHeader("Content-Length", buffer.length);
+        res.send(buffer);
     }
 }

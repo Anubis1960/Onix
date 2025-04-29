@@ -2,6 +2,8 @@ import {UserService} from "../service/user.service";
 import {Request, Response} from "express";
 import logger from "../config/logger.config";
 import {FolderService} from "../service/folder.service";
+import {FileService} from "../service/file.service";
+import {SupabaseService} from "../service/supabase.service";
 
 /**
  * UserController handles user-related requests.
@@ -17,10 +19,14 @@ import {FolderService} from "../service/folder.service";
 export class UserController {
     private userService: UserService;
     private folderService: FolderService;
+    private fileService: FileService;
+    private supabaseStorage: SupabaseService;
 
     constructor() {
         this.userService = new UserService();
         this.folderService = new FolderService();
+        this.fileService = new FileService();
+        this.supabaseStorage = new SupabaseService();
     }
 
     async getAllUsers(req: Request, res: Response) {
@@ -83,12 +89,20 @@ export class UserController {
             res.status(400).json({message: "User ID is required"});
             return;
         }
+
+        let folderIds = await this.folderService.getFoldersIdsByUserId(userId);
+        for (let folderId of folderIds) {
+            let filePaths = await this.fileService.getStoragePathByParentId(folderId);
+            for (const filePath of filePaths) {
+                await this.supabaseStorage.deleteFile("vault", filePath);
+            }
+        }
+
         const deletedUser = await this.userService.deleteUser(userId);
         if ("status" in deletedUser) {
             res.status(deletedUser.status).json({message: deletedUser.message});
             return;
         }
-        // TODO: Delete all folders and files associated with the user
         res.status(200).json(deletedUser);
     }
 }

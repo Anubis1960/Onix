@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import logger from "../config/logger.config";
 import {FolderService} from "../service/folder.service";
 import {FileService} from "../service/file.service";
+import {SupabaseService} from "../service/supabase.service";
 
 /**
  * FolderController handles folder-related requests.
@@ -18,10 +19,12 @@ import {FileService} from "../service/file.service";
 export class FolderController {
     private folderService: FolderService;
     private fileService: FileService;
+    private supabaseService: SupabaseService
 
     constructor() {
         this.folderService = new FolderService();
         this.fileService = new FileService();
+        this.supabaseService = new SupabaseService();
     }
 
     async getAllFolders(req: Request, res: Response) {
@@ -70,8 +73,29 @@ export class FolderController {
     }
 
     async deleteFolder(req: Request, res: Response) {
-        //TODO Implement cascade delete for folders and files in db and storage
         const folderId = req.params.id;
+        let foldersTBD: string[] = []
+        foldersTBD.push(folderId)
+        while (foldersTBD.length > 0) {
+            const folderId = foldersTBD.pop();
+            if (!folderId) {
+                break;
+            }
+            const ids = await this.folderService.getIdsByParentId(folderId);
+
+            if (ids.length > 0) {
+                ids.forEach(id => {
+                    foldersTBD.push(id);
+                });
+            }
+            const paths = await this.fileService.getStoragePathByParentId(folderId);
+            if (paths.length > 0) {
+                paths.forEach(path => {
+                    this.supabaseService.deleteFile("vault", path);
+                });
+            }
+        }
+
         const deletedFolder = await this.folderService.deleteFolder(folderId);
         if ("status" in deletedFolder) {
             res.status(deletedFolder.status).json({message: deletedFolder.message});

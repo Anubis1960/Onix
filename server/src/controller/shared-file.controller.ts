@@ -3,6 +3,7 @@ import logger from "../config/logger.config";
 import {SharedFileService} from "../service/shared-file.service";
 import {v4 as uuidv4} from "uuid";
 import {SupabaseService} from "../service/supabase.service";
+import fs from "fs";
 
 /**
  * SharedFileController handles shared file-related requests.
@@ -46,7 +47,7 @@ export class SharedFileController {
             res.status(400).json({message: "File is required"});
             return;
         }
-        logger.info(req.file);
+
         const roomId = uuidv4();
         const fileData = {
             name: req.file.originalname,
@@ -56,35 +57,33 @@ export class SharedFileController {
             timeToLive: req.body.timeToLive,
             roomId: roomId,
         };
-        logger.info(fileData);
+
         if (!fileData.name || !fileData.type || !fileData.downloadsRemaining || !fileData.timeToLive) {
             res.status(400).json({message: "Name and path are required"});
             return;
         }
+
         const newFile = await this.sharedFileService.createFile(fileData);
         if ("status" in newFile) {
             res.status(newFile.status).json({message: newFile.message});
             return;
         }
-        const storagePath = `${roomId}/${newFile.id}/${fileData.name}`;
-        const uploadResult = await this.supabaseService.uploadFile("shared", storagePath, req.file.buffer);
-        logger.info(uploadResult);
-        res.status(201).json(newFile);
-    }
+        const file = req.file;
 
-    async updateFile(req: Request, res: Response) {
-        const fileId = req.params.id;
-        const updatedData = req.body;
-        if (!updatedData.name) {
-            res.status(400).json({message: "Name or path is required"});
-            return;
-        }
-        const updatedFile = await this.sharedFileService.updateFile(fileId, updatedData);
-        if ("status" in updatedFile) {
-            res.status(updatedFile.status).json({message: updatedFile.message});
-            return;
-        }
-        res.status(200).json(updatedFile);
+        let buffer = fs.readFileSync(file.path);
+        const storagePath = `${roomId}/${newFile.id}/${fileData.name}`;
+        await this.supabaseService.uploadFile("shared", storagePath, buffer, fileData.type);
+
+        // remove the file from the local storage
+        const filePath = req.file.path;
+        fs.unlink(filePath, (err: any) => {
+            if (err) {
+                logger.error("Error deleting file:", err);
+            } else {
+                logger.info("File deleted successfully");
+            }
+        });
+        res.status(201).json(newFile);
     }
 
     async deleteFile(req: Request, res: Response) {
@@ -99,7 +98,35 @@ export class SharedFileController {
         res.status(200).json(deletedFile);
     }
 
+    async getFilesByRoomId(req: Request, res: Response) {
+        const roomId = req.params.roomId;
+        const files = await this.sharedFileService.getFilesByRoomId(roomId);
+        if (files === null) {
+            res.status(404).json({message: "Files not found"});
+            return;
+        }
+        res.status(200).json(files);
+    }
+
     async downloadFile(req: Request, res: Response) {
-        //TODO Implement download file
+        const fileId = req.params.id;
+        const file = await this.sharedFileService.getMetadataById(fileId);
+        if (file.storagePath === undefined || file.fileSize === undefined || file.fileType === undefined) {
+            res.status(404).json({message: "File not found"});
+            return;
+        }
+        const dfile = await this.supabaseService.getFile("vault", file.storagePath);
+        if (dfile === null) {
+            res.status(404).json({message: "File not found"});
+            return;
+        }
+
+        const arrayBuffer = await dfile.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        res.setHeader("Content-Disposition", `attachment; filename=${file.fileName}`);
+        res.setHeader("Content-Type", file.fileType);
+        res.setHeader("Content-Length", buffer.length);
+        res.send(buffer);
     }
 }

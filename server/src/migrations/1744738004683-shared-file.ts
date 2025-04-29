@@ -11,6 +11,7 @@ export class FileShared1744738004683 implements MigrationInterface {
                 "file_size"           INT          NOT NULL,
                 "file_type"           VARCHAR(255) NOT NULL,
                 "storage_path"        VARCHAR(255) NOT NULL,
+                "room_id"             UUID         NOT NULL,
                 "downloads_remaining" INT2         NOT NULL,
                 "time_to_live"        INT2         NOT NULL,
                 "created_at"          TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,

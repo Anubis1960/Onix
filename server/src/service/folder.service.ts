@@ -126,4 +126,27 @@ export class FolderService {
             );
         });
     }
+
+    async getIdsByParentId(parentId: string) {
+        const folders = await FolderRepository.findFolderIdsByParentId(parentId);
+        if (!folders) {
+            logger.info("No folders found for parent ID:", parentId)
+            return []
+        }
+        logger.info(folders);
+        return folders.map(folder => {
+            return folder.id;
+        });
+    }
+
+    async getFoldersIdsByUserId(userId: string) {
+        const folders = await FolderRepository.findFolderIdsByUserId(userId);
+        if (!folders) {
+            logger.info("No folders found for user ID:", userId)
+            return []
+        }
+        return folders.map(folder => {
+            return folder.id;
+        });
+    }
 }

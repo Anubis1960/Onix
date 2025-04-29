@@ -1,5 +1,5 @@
 import multer from 'multer';
-import {Request, Response} from 'express';
+import {Request} from 'express';
 
 const storage = multer.diskStorage({
     destination: (req: Request, file: Express.Multer.File, cb: (error: Error | null, destination: string) => void) => {

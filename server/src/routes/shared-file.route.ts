@@ -25,17 +25,17 @@ router.post(
     sharedFileController.createFile.bind(sharedFileController)
 );
 
-router.put(
-    "/:id",
-    authMiddleware,
-    sharedFileController.updateFile.bind(sharedFileController)
-);
-
 router.delete(
     "/:id",
     authMiddleware,
     sharedFileController.deleteFile.bind(sharedFileController)
 );
+
+router.get(
+    "/room/:roomId",
+    authMiddleware,
+    sharedFileController.getFilesByRoomId.bind(sharedFileController)
+)
 
 router.get(
     "/download/:id",

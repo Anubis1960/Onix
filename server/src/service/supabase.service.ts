@@ -1,4 +1,6 @@
 import supabase from "../config/supabase.config";
+import {compressFile, decompressFile} from "../utils/archive.utils";
+import logger from "../config/logger.config";
 
 /**
  * @class SupabaseService
@@ -9,9 +11,10 @@ import supabase from "../config/supabase.config";
  */
 
 export class SupabaseService {
-    async uploadFile(bucket: string, filePath: string, file: any) {
+    async uploadFile(bucket: string, filePath: string, file: Buffer, mimetype: string) {
+        // compress file
         const {data, error} = await supabase.storage.from(bucket).upload(filePath, file, {
-            upsert: true,
+            contentType: mimetype,
         });
         if (error) {
             throw new Error(`Error uploading file: ${error.message}`);

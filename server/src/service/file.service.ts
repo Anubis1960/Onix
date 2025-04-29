@@ -123,4 +123,29 @@ export class FileService {
             )
         });
     }
+
+    async getStoragePathByParentId(parentId: string) {
+        const files = await FileRepository.findByFolderId(parentId);
+        if (!files) {
+            logger.info("No files found for folder ID:", parentId);
+            return [];
+        }
+        return files.map(file => {
+            return file.storagePath;
+        });
+    }
+
+    async getMetadataById(id: string) {
+        const file = await FileRepository.findById(id);
+        if (!file) {
+            logger.info("No files found for folder ID:", id);
+            return {};
+        }
+        return {
+            storagePath: file.storagePath,
+            fileName: file.fileName,
+            fileSize: file.fileSize,
+            fileType: file.fileType,
+        }
+    }
 }

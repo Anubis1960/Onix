@@ -37,17 +37,18 @@ export const SharedFileRepository = datasource.getRepository(SharedFile).extend(
             .getOne();
     },
 
-    createFileShared(id: string, fileName: string, fileSize: number, fileType: string, storagePath: string, downloadsRemaining: number, timeToLive: number) {
-        const fileShared = this.create({id, fileName, fileSize, fileType, downloadsRemaining, timeToLive, storagePath});
+    createFileShared(id: string, fileName: string, fileSize: number, fileType: string, storagePath: string, roomId: string, downloadsRemaining: number, timeToLive: number) {
+        const fileShared = this.create({
+            id,
+            fileName,
+            fileSize,
+            fileType,
+            roomId,
+            downloadsRemaining,
+            timeToLive,
+            storagePath
+        });
         return this.save(fileShared);
-    },
-
-    updateFileShared(id: string, updatedData: Partial<SharedFile>) {
-        return this.createQueryBuilder("file_shared")
-            .update(SharedFile)
-            .set(updatedData)
-            .where("file_id = :id", {id})
-            .execute();
     },
 
     deleteFileShared(id: string) {
@@ -56,6 +57,21 @@ export const SharedFileRepository = datasource.getRepository(SharedFile).extend(
             .from(SharedFile)
             .where("file_id = :id", {id})
             .execute();
+    },
+
+    findByRoomId(roomId: string) {
+        return this.createQueryBuilder("file_shared")
+            .select([
+                "file_shared.id",
+                "file_shared.fileName",
+                "file_shared.fileSize",
+                "file_shared.fileType",
+                "file_shared.downloadsRemaining",
+                "file_shared.timeToLive",
+                "file_shared.createdAt",
+            ])
+            .where("file_shared.roomId = :roomId", {roomId})
+            .getMany();
     },
 })
 

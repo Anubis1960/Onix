@@ -3,6 +3,7 @@ import {SharedFileRepository} from "../repository/shared-file.repository";
 import {SharedFileDto} from "../dto/shared-file.dto";
 import {v4 as uuidv4} from "uuid";
 import {StorageFileDto} from "../dto/storage-file.dto";
+import {FileRepository} from "../repository/file.repository";
 
 /**
  * @class SharedFileService
@@ -39,6 +40,14 @@ export class SharedFileService {
             logger.info("File not found for ID:", id)
             return null
         }
+        if (file.createdAt.getTime() + file.timeToLive * 3600 * 1000 < new Date().getTime()) {
+            logger.info("File expired for ID:", id);
+            return null;
+        }
+        if (file.downloadsRemaining <= 0) {
+            logger.info("File downloads remaining for ID:", id);
+            return null;
+        }
         logger.info(file.toString());
         return new SharedFileDto(
             file.id,
@@ -55,9 +64,10 @@ export class SharedFileService {
         const {name, size, type, downloadsRemaining, timeToLive, roomId} = fileData;
         const id = uuidv4();
         const storagePath = `${roomId}/${id}/${name}`;
-        const newFile = await SharedFileRepository.createFileShared(id, name, size, type, storagePath, downloadsRemaining, timeToLive);
+        const newFile = await SharedFileRepository
+            .createFileShared(id, name, size, type, storagePath, roomId, downloadsRemaining, timeToLive);
         if (!newFile) {
-            return {status: 409, message: "File already exists"};
+            return {status: 409, message: "Error creating file"};
         }
         return new SharedFileDto(
             newFile.id,
@@ -67,39 +77,6 @@ export class SharedFileService {
             newFile.downloadsRemaining,
             newFile.timeToLive,
             newFile.createdAt
-        );
-    }
-
-    async updateFile(id: string, updatedData: {
-        name?: string;
-        size?: number;
-        downloadsRemaining?: number;
-        timeToLive?: number
-    }) {
-        const file = await SharedFileRepository.findById(id);
-        if (!file) {
-            return {status: 404, message: "File not found"};
-        }
-        let partialFile: Partial<SharedFileDto> = {
-            fileName: updatedData.name,
-            fileSize: updatedData.size,
-            fileType: file.fileType,
-            downloadsRemaining: updatedData.downloadsRemaining,
-            timeToLive: updatedData.timeToLive,
-        };
-        await SharedFileRepository.updateFileShared(id, partialFile);
-        const updatedFile = await SharedFileRepository.findById(id);
-        if (!updatedFile) {
-            return {status: 404, message: "File not found"};
-        }
-        return new SharedFileDto(
-            updatedFile.id,
-            updatedFile.fileName,
-            updatedFile.fileSize,
-            updatedFile.fileType,
-            updatedFile.downloadsRemaining,
-            updatedFile.timeToLive,
-            updatedFile.createdAt
         );
     }
 
@@ -121,5 +98,46 @@ export class SharedFileService {
             ),
             file.storagePath
         );
+    }
+
+    async getFilesByRoomId(roomId: string) {
+        const files = await SharedFileRepository.findByRoomId(roomId);
+        if (!files) {
+            logger.info("No files found for room ID:", roomId)
+            return [];
+        }
+        if (files[0].createdAt.getTime() + files[0].timeToLive * 3600 * 1000 < new Date().getTime()) {
+            logger.info("File expired for room ID:", roomId);
+            return [];
+        }
+        if (files[0].downloadsRemaining <= 0) {
+            logger.info("File downloads remaining for room ID:", roomId);
+            return [];
+        }
+        return files.map(file => {
+            return new SharedFileDto(
+                file.id,
+                file.fileName,
+                file.fileSize,
+                file.fileType,
+                file.downloadsRemaining,
+                file.timeToLive,
+                file.createdAt
+            );
+        });
+    }
+
+    async getMetadataById(id: string) {
+        const file = await FileRepository.findById(id);
+        if (!file) {
+            logger.info("No files found for folder ID:", id);
+            return {};
+        }
+        return {
+            storagePath: file.storagePath,
+            fileName: file.fileName,
+            fileSize: file.fileSize,
+            fileType: file.fileType,
+        }
     }
 }
