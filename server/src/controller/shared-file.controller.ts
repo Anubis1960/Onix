@@ -93,9 +93,10 @@ export class SharedFileController {
             res.status(deletedFile.status).json({message: deletedFile.message});
             return;
         }
+        logger.info(deletedFile);
         const deleteResult = await this.supabaseService.deleteFile("shared", deletedFile.storagePath);
         logger.info(deleteResult);
-        res.status(200).json(deletedFile);
+        res.status(200).json(deletedFile.fileDto);
     }
 
     async getFilesByRoomId(req: Request, res: Response) {
@@ -111,17 +112,27 @@ export class SharedFileController {
     async downloadFile(req: Request, res: Response) {
         const fileId = req.params.id;
         const file = await this.sharedFileService.getMetadataById(fileId);
-        if (file.storagePath === undefined || file.fileSize === undefined || file.fileType === undefined) {
+        logger.info(file);
+        if (file === null) {
             res.status(404).json({message: "File not found"});
             return;
         }
-        const dfile = await this.supabaseService.getFile("vault", file.storagePath);
-        if (dfile === null) {
+        if (file.storagePath === undefined) {
+            res.status(404).json({message: "File not found"});
+            return;
+        }
+        if (file.fileName === undefined) {
+            await this.supabaseService.deleteFile("shared", file.storagePath);
+            res.status(404).json({message: "File expired or has reached its download limit"});
+            return;
+        }
+        const dFile = await this.supabaseService.getFile("shared", file.storagePath);
+        if (dFile === null) {
             res.status(404).json({message: "File not found"});
             return;
         }
 
-        const arrayBuffer = await dfile.arrayBuffer();
+        const arrayBuffer = await dFile.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
         res.setHeader("Content-Disposition", `attachment; filename=${file.fileName}`);

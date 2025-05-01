@@ -29,6 +29,7 @@ export const SharedFileRepository = datasource.getRepository(SharedFile).extend(
                 "file_shared.fileName",
                 "file_shared.fileSize",
                 "file_shared.fileType",
+                "file_shared.storagePath",
                 "file_shared.downloadsRemaining",
                 "file_shared.timeToLive",
                 "file_shared.createdAt",

@@ -89,16 +89,9 @@ export class UserController {
             res.status(400).json({message: "User ID is required"});
             return;
         }
-
-        let folderIds = await this.folderService.getFoldersIdsByUserId(userId);
-        for (let folderId of folderIds) {
-            let filePaths = await this.fileService.getStoragePathByParentId(folderId);
-            for (const filePath of filePaths) {
-                await this.supabaseStorage.deleteFile("vault", filePath);
-            }
-        }
-
         const deletedUser = await this.userService.deleteUser(userId);
+        const dirPath = `${userId}/*`;
+        await this.supabaseStorage.deleteFile("vault", dirPath);
         if ("status" in deletedUser) {
             res.status(deletedUser.status).json({message: deletedUser.message});
             return;

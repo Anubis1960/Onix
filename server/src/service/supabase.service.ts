@@ -17,7 +17,7 @@ export class SupabaseService {
             contentType: mimetype,
         });
         if (error) {
-            throw new Error(`Error uploading file: ${error.message}`);
+            return null;
         }
         return data;
     }
@@ -25,7 +25,7 @@ export class SupabaseService {
     async getFile(bucket: string, filePath: string) {
         const {data, error} = await supabase.storage.from(bucket).download(filePath);
         if (error) {
-            throw new Error(`Error retrieving file: ${error.message}`);
+            return null;
         }
         return data;
     }
@@ -33,7 +33,7 @@ export class SupabaseService {
     async deleteFile(bucket: string, filePath: string) {
         const {data, error} = await supabase.storage.from(bucket).remove([filePath]);
         if (error) {
-            throw new Error(`Error deleting file: ${error.message}`);
+            return null;
         }
         return data;
     }
@@ -41,7 +41,7 @@ export class SupabaseService {
     async moveFile(bucket: string, oldFilePath: string, newFilePath: string) {
         const {data, error} = await supabase.storage.from(bucket).move(oldFilePath, newFilePath);
         if (error) {
-            throw new Error(`Error updating file: ${error.message}`);
+            return null;
         }
         return data;
     }

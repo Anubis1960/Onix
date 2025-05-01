@@ -3,7 +3,6 @@ import {SharedFileRepository} from "../repository/shared-file.repository";
 import {SharedFileDto} from "../dto/shared-file.dto";
 import {v4 as uuidv4} from "uuid";
 import {StorageFileDto} from "../dto/storage-file.dto";
-import {FileRepository} from "../repository/file.repository";
 
 /**
  * @class SharedFileService
@@ -128,11 +127,26 @@ export class SharedFileService {
     }
 
     async getMetadataById(id: string) {
-        const file = await FileRepository.findById(id);
+        const file = await SharedFileRepository.findById(id);
         if (!file) {
             logger.info("No files found for folder ID:", id);
             return {};
         }
+        if (file.createdAt.getTime() + file.timeToLive * 3600 * 1000 < new Date().getTime()) {
+            logger.info("File expired for ID:", id);
+            return {
+                storagePath: file.storagePath,
+            };
+        }
+        if (file.downloadsRemaining <= 0) {
+            logger.info("File downloads remaining for ID:", id);
+            return {
+                storagePath: file.storagePath,
+            };
+        }
+        await SharedFileRepository.update(id, {
+            downloadsRemaining: file.downloadsRemaining - 1,
+        });
         return {
             storagePath: file.storagePath,
             fileName: file.fileName,
