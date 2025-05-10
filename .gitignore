@@ -147,17 +147,17 @@ dist
 /frontend/tsconfig.tsbuildinfo
 /node_modules
 node_modules
-/server/node_modules
-/server/build
-/server/dist
-/server/.env
-/server/.env.development
-/server/.env.production
-/server/.env.test
-/server/.env.local
-/server/tsconfig.tsbuildinfo
-/server/logs
-/server/uploads
+/backend/node_modules
+/backend/build
+/backend/dist
+/backend/.env
+/backend/.env.development
+/backend/.env.production
+/backend/.env.test
+/backend/.env.local
+/backend/tsconfig.tsbuildinfo
+/backend/logs
+/backend/uploads
 /.pnp
 .pnp.js
 
@@ -170,4 +170,4 @@ node_modules
 # misc
 .DS_Store
 
-server/.env
+backend/.env
