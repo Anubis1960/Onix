@@ -171,3 +171,11 @@ node_modules
 .DS_Store
 
 backend/.env
+
+*/.env
+*/build
+*/dist
+*/.env.development
+*/.env.production
+*/.env.test
+*/.env.local

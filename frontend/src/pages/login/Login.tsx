@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {AuthService} from '../../service/auth.service';
+import {authService} from '../../service/auth.service';
+import {Link} from 'react-router-dom';
 
 
 export const Login = () => {
@@ -8,7 +9,6 @@ export const Login = () => {
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
-        const authService = new AuthService();
         try {
             const response = await authService.login(email, password);
             localStorage.setItem('accessToken', response.accessToken);
@@ -37,8 +37,9 @@ export const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type="submit">Login</button>
+                <button type="submit" onSubmit={handleLogin}>Login</button>
             </form>
+            <p>Don't have an account? <Link to="/register">Register</Link></p>
         </div>
     );
 }

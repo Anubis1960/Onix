@@ -2,7 +2,7 @@ import {API_URL} from "../utils/constants.ts";
 import {PasswordManagerModel} from "../models/password-manager.model.ts";
 
 
-export class PasswordManagerService {
+class PasswordManagerService {
     public async getPasswordById(id: string): Promise<PasswordManagerModel> {
         const response = await fetch(`${API_URL}/password-manager/${id}`, {
             method: "GET",
@@ -69,3 +69,5 @@ export class PasswordManagerService {
         return response.json();
     }
 }
+
+export const passwordManagerService = new PasswordManagerService();

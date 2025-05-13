@@ -1,7 +1,7 @@
 import {API_URL} from "../utils/constants.ts";
 import {SharedFileModel} from "../models/shared-file.model.ts";
 
-export class SharedFileService {
+class SharedFileService {
 
     public async getSharedFileById(id: string): Promise<SharedFileModel> {
         const response = await fetch(`${API_URL}/shared-file/${id}`, {
@@ -57,3 +57,5 @@ export class SharedFileService {
         return response.blob();
     }
 }
+
+export const sharedFileService = new SharedFileService();

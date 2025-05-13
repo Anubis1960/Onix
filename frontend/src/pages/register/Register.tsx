@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {AuthService} from '../../service/auth.service';
+import {authService} from '../../service/auth.service';
+import {Link} from 'react-router-dom';
 
 export const Register = () => {
     const [email, setEmail] = useState<string>('');
@@ -12,7 +13,6 @@ export const Register = () => {
             alert('Passwords do not match');
             return;
         }
-        const authService = new AuthService();
         try {
             await authService.register(email, password);
             window.location.href = '/login';
@@ -46,8 +46,9 @@ export const Register = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                 />
-                <button type="submit">Register</button>
+                <button type="submit" onSubmit={handleRegister}>Register</button>
             </form>
+            <p>Already have an account? <Link to="/login">Login</Link></p>
         </div>
     );
 }

@@ -1,6 +1,6 @@
 import {UserModel} from "../models/user.model.ts";
 
-export class AuthService {
+class AuthService {
     public async login(email: string, password: string): Promise<{
         accessToken: string,
         user: UserModel,
@@ -44,4 +44,14 @@ export class AuthService {
         });
         return response.json();
     }
+
+    public getCurrentUser(): UserModel | null {
+        const user = localStorage.getItem("user");
+        if (user) {
+            return JSON.parse(user);
+        }
+        return null;
+    }
 }
+
+export const authService = new AuthService();

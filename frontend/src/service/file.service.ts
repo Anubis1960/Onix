@@ -1,7 +1,7 @@
 import {API_URL} from "../utils/constants.ts";
 import {FileModel} from "../models/file.model.ts";
 
-export class FileService {
+class FileService {
     public async getFileById(id: string): Promise<FileModel> {
         const response = await fetch(`${API_URL}/file/${id}`, {
             method: "GET",
@@ -82,5 +82,6 @@ export class FileService {
         return response.blob();
     }
 
-
 }
+
+export const fileService = new FileService();

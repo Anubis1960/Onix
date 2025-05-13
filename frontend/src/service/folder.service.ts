@@ -2,7 +2,7 @@ import {API_URL} from "../utils/constants.ts";
 import {FolderModel} from "../models/folder.model.ts";
 import {FileModel} from "../models/file.model.ts";
 
-export class FolderService {
+class FolderService {
 
     public async getFolderById(id: string): Promise<FolderModel> {
         const response = await fetch(`${API_URL}/folder/${id}`, {
@@ -88,3 +88,5 @@ export class FolderService {
         return response.json();
     }
 }
+
+export const folderService = new FolderService();
