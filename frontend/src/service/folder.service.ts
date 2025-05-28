@@ -1,22 +1,21 @@
 import {API_URL} from "../utils/constants.ts";
-import {FolderModel} from "../models/folder.model.ts";
-import {FileModel} from "../models/file.model.ts";
 
 class FolderService {
 
-    public async getFolderById(id: string): Promise<FolderModel> {
+    public async getFolderById(id: string): Promise<Response> {
         const response = await fetch(`${API_URL}/folder/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-            }
+            },
+            credentials: 'include'
         });
         return response.json();
     }
 
-    public async createFolder(name: string, parentId: string, userId: string): Promise<FolderModel> {
-        const response: Response = await fetch(`${API_URL}/folder`, {
+    public async createFolder(name: string, parentId: string, userId: string): Promise<Response> {
+        return await fetch(`${API_URL}/folder`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -26,12 +25,12 @@ class FolderService {
                 name,
                 parentId,
                 userId
-            })
+            }),
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async updateFolder(id: string, folderName?: string, parentId?: string): Promise<FolderModel> {
+    public async updateFolder(id: string, folderName?: string, parentId?: string): Promise<Response> {
 
         const formData = new FormData();
         if (folderName) {
@@ -41,51 +40,59 @@ class FolderService {
             formData.append("parentId", parentId);
         }
 
-        const response = await fetch(`${API_URL}/folder/${id}`, {
+        return await fetch(`${API_URL}/folder/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
             },
-            body: formData
+            body: formData,
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async deleteFolder(id: string): Promise<FolderModel> {
-        const response = await fetch(`${API_URL}/folder/${id}`, {
+    public async deleteFolder(id: string): Promise<Response> {
+        return await fetch(`${API_URL}/folder/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-            }
+            },
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async getFoldersByUserId(userId: string): Promise<FolderModel[]> {
-        const response = await fetch(`${API_URL}/folder/user/${userId}`, {
+    public async getFoldersByUserId(userId: string): Promise<Response> {
+        return await fetch(`${API_URL}/folder/user/${userId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-            }
+            },
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async getChildrenByParentId(parentId: string): Promise<{
-        files: FileModel[],
-        folders: FolderModel[]
-    }> {
-        const response = await fetch(`${API_URL}/folder/children/${parentId}`, {
+    public async getRootFolder(userId: string): Promise<Response> {
+        return await fetch(`${API_URL}/folder/user/${userId}/root`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-            }
+            },
+            credentials: 'include'
         });
-        return response.json();
+    }
+
+    public async getChildrenByParentId(parentId: string): Promise<Response> {
+        return await fetch(`${API_URL}/folder/children/${parentId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+            },
+            credentials: 'include'
+        });
     }
 }
 

@@ -42,6 +42,12 @@ router.get(
 );
 
 router.get(
+    "/user/:userId/root",
+    authMiddleware,
+    folderController.getRootFolder.bind(folderController)
+);
+
+router.get(
     "/children/:parentId",
     authMiddleware,
     folderController.getChildrenByParentId.bind(folderController)

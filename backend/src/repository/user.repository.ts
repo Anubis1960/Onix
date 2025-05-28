@@ -20,6 +20,8 @@ export const UserRepository = dataSource.getRepository(User).extend({
         return this.createQueryBuilder("user")
             .select([
                 "user.id",
+                "user.email",
+                "user.password",
             ])
             .where("user.email = :email", {email})
             .getOne();

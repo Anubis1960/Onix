@@ -25,11 +25,13 @@ export class AuthController {
         const {email, password} = req.body;
         if (!email || !password) {
             res.status(400).json({message: "Email and password are required"});
+            return;
         }
         const user = await this.userService.findByEmailAndPassword(email, password);
 
         if (!user) {
             res.status(401).json({message: "Invalid credentials"});
+            return;
         }
         const accessToken = generateAccessToken();
         const refreshToken = generateRefreshToken();
@@ -50,10 +52,12 @@ export class AuthController {
         const {email, password} = req.body;
         if (!email || !password) {
             res.status(400).json({message: "Email and password are required"});
+            return;
         }
         const existingUser = await this.userService.findByEmail(email);
         if (existingUser) {
             res.status(409).json({message: "User already exists"});
+            return;
         }
         const newUser = await this.userService.createUser({
             email,
@@ -118,11 +122,13 @@ export class AuthController {
     async refreshTokens(req: Request, res: Response) {
         if (!req.cookies.refreshToken) {
             res.sendStatus(401);
+            return;
         }
         const refreshToken = req.cookies.refreshToken;
         const decodedToken = verifyToken(refreshToken);
         if (!decodedToken) {
             res.sendStatus(403);
+            return;
         }
         const accessToken = generateAccessToken();
         res.status(200).json({

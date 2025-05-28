@@ -111,6 +111,19 @@ export class FolderService {
         });
     }
 
+    async getRootFolderByUserId(userId: string) {
+        const rootFolder = await FolderRepository.findRootFolderByUserId(userId);
+        if (!rootFolder) {
+            logger.info("Root folder not found for user ID:", userId)
+            return null;
+        }
+        return new FolderDto(
+            rootFolder.id,
+            rootFolder.folderName,
+            rootFolder.parentId,
+        );
+    }
+
     async getFoldersByParentId(parentId: string) {
         const folders = await FolderRepository.findByParentId(parentId);
         if (!folders) {

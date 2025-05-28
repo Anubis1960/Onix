@@ -1,4 +1,6 @@
 export class PasswordManagerModel {
+    [x: string]: any;
+
     public id: string;
     public domain: string;
     public username: string;

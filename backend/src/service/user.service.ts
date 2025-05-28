@@ -42,6 +42,7 @@ export class UserService {
 
     async createUser(userData: any) {
         const {email, password} = userData;
+        console.log("Creating user with email:", email);
         const existingUser = await UserRepository.findByEmail(email);
         if (existingUser) {
             return {status: 409, message: "User already exists"};
@@ -95,6 +96,8 @@ export class UserService {
         if (!user) {
             return null
         }
+        console.log("User found:", user.toString());
+        console.log("Password to compare:", password);
         if (!comparePassword(password, user.password)) {
             return null
         }

@@ -1,36 +1,35 @@
 import {API_URL} from "../utils/constants.ts";
-import {FileModel} from "../models/file.model.ts";
 
 class FileService {
-    public async getFileById(id: string): Promise<FileModel> {
-        const response = await fetch(`${API_URL}/file/${id}`, {
+    public async getFileById(id: string): Promise<Response> {
+        return await fetch(`${API_URL}/file/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-            }
+            },
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async createFile(file: File, folderId: string, userId: string): Promise<FileModel> {
+    public async createFile(file: File, folderId: string, userId: string): Promise<Response> {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("folderId", folderId);
         formData.append("userId", userId);
 
-        const response = await fetch(`${API_URL}/file`, {
+        return await fetch(`${API_URL}/file`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
             },
-            body: formData
+            body: formData,
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async updateFile(id: string, fileName?: string, folderId?: string): Promise<FileModel> {
+    public async updateFile(id: string, fileName?: string, folderId?: string): Promise<Response> {
         const formData = new FormData();
         if (fileName) {
             formData.append("fileName", fileName);
@@ -38,48 +37,48 @@ class FileService {
         if (folderId) {
             formData.append("folderId", folderId);
         }
-        const response = await fetch(`${API_URL}/file/${id}`, {
+        return await fetch(`${API_URL}/file/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
             },
-            body: formData
+            body: formData,
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async deleteFile(id: string): Promise<FileModel> {
-        const response = await fetch(`${API_URL}/file/${id}`, {
+    public async deleteFile(id: string): Promise<Response> {
+        return await fetch(`${API_URL}/file/${id}`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-            }
+            },
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async getFilesByFolderId(folderId: string): Promise<FileModel[]> {
-        const response = await fetch(`${API_URL}/file/folder/${folderId}`, {
+    public async getFilesByFolderId(folderId: string): Promise<Response> {
+        return await fetch(`${API_URL}/file/folder/${folderId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-            }
+            },
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async downloadFile(id: string): Promise<Blob> {
-        const response = await fetch(`${API_URL}/file/download/${id}`, {
+    public async downloadFile(id: string): Promise<Response> {
+        return await fetch(`${API_URL}/file/download/${id}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${localStorage.getItem("accessToken")}`,
-            }
+            },
+            credentials: 'include'
         });
-        return response.blob();
     }
 
 }

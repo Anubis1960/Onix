@@ -1,29 +1,26 @@
 import {UserModel} from "../models/user.model.ts";
 
 class AuthService {
-    public async login(email: string, password: string): Promise<{
-        accessToken: string,
-        user: UserModel,
-    }> {
-        const response = await fetch(`http://localhost:5000/auth/login`, {
+    public async login(email: string, password: string): Promise<Response> {
+        return await fetch(`http://localhost:5000/auth/login`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({email, password})
+            body: JSON.stringify({email, password}),
+            credentials: 'include'
         });
-        return response.json();
     }
 
-    public async register(email: string, password: string): Promise<UserModel> {
-        const response = await fetch(`http://localhost:5000/auth/register`, {
+    public async register(email: string, password: string): Promise<Response> {
+        return await fetch(`http://localhost:5000/auth/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({email, password})
+            body: JSON.stringify({email, password}),
+            credentials: 'include'
         });
-        return response.json();
     }
 
     public async logout(): Promise<void> {
@@ -31,18 +28,19 @@ class AuthService {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: 'include'
         });
     }
 
-    public async refreshToken(): Promise<{ accessToken: string }> {
-        const response = await fetch(`http://localhost:5000/auth/refresh-token`, {
+    public async refreshToken(): Promise<Response> {
+        return await fetch(`http://localhost:5000/auth/refresh-token`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-            }
+            },
+            credentials: 'include'
         });
-        return response.json();
     }
 
     public getCurrentUser(): UserModel | null {

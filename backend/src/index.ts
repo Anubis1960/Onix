@@ -16,7 +16,14 @@ import {SERVER_PORT} from "./utils/secrets.utils";
 
 const app: Express = express();
 
-app.use(cors())
+app.use(cors(
+    {
+        origin: 'http://localhost:5173', // Adjust this to your frontend URL
+        credentials: true, // Allow cookies to be sent with requests
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization']
+    }
+))
 app.use(passport.initialize());
 app.use(bodyParser.json());
 app.use(cookieParser());

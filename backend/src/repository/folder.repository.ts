@@ -90,4 +90,16 @@ export const FolderRepository = datasource.getRepository(Folder).extend({
             .getMany();
     },
 
+    findRootFolderByUserId(userId: string) {
+        return this.createQueryBuilder("folder_vault")
+            .select([
+                "folder_vault.id",
+                "folder_vault.folderName",
+                "folder_vault.parentId",
+            ])
+            .where("folder_vault.user_id = :userId", {userId})
+            .andWhere("folder_vault.parent_id IS NULL")
+            .getOne();
+    }
+
 })

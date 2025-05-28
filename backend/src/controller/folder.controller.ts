@@ -106,6 +106,16 @@ export class FolderController {
         res.status(200).json(folder);
     }
 
+    async getRootFolder(req: Request, res: Response) {
+        const userId = req.params.userId;
+        const rootFolder = await this.folderService.getRootFolderByUserId(userId);
+        if (rootFolder === null) {
+            res.status(404).json({message: "Root folder not found"});
+            return;
+        }
+        res.status(200).json(rootFolder);
+    }
+
     async getChildrenByParentId(req: Request, res: Response) {
         const parentId = req.params.parentId;
         const result = {
